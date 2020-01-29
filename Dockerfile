@@ -71,6 +71,8 @@ RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
     curl \
     gnupg2 \
     software-properties-common \
+    gettext \
+    jq \
  && rm -rf /var/lib/apt/lists/*
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 RUN add-apt-repository \
