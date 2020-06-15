@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.14.2
+ARG GO_VERSION=1.14.4
 
 # OS-X SDK parameters
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
@@ -83,7 +83,7 @@ RUN apt-get update -qq && apt-get  -y -q --no-install-recommends install docker-
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -s
 RUN apt install nodejs
 
-ARG GORELEASER_VERSION=0.131.1
+ARG GORELEASER_VERSION=0.138.0
 ARG GORELEASER_DOWNLOAD_FILE=goreleaser_Linux_x86_64.tar.gz
 ARG GORELEASER_DOWNLOAD_URL=https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/${GORELEASER_DOWNLOAD_FILE}
 
