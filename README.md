@@ -6,9 +6,18 @@ This is a fork of [docker/golang-cross](https://github.com/docker/golang-cross).
 To build this image, run locally:
 
 ```shell script
-tag=1.14.4-0.138.0
+tag=1.14.4-0.139.0
 docker build -t oryd/xgoreleaser:${tag} .
 docker push oryd/xgoreleaser:${tag}
 ```
 
-To build this image using the CI, create a new release with the desired Golang version
+To build this image using the CI, create a new release with the desired Golang version.
+
+```
+docker run --mount type=bind,source="$(pwd)",target=/project \
+    oryd/xgoreleaser:1.14.4-0.139.0 --skip-publish --snapshot --rm-dist
+```
+
+```
+docker run --entrypoint /bin/bash -it oryd/xgoreleaser:1.14.4-0.139.0
+```
