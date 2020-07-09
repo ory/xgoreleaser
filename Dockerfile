@@ -83,7 +83,7 @@ RUN apt-get update -qq && apt-get  -y -q --no-install-recommends install docker-
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -s
 RUN apt install nodejs
 
-ARG GORELEASER_VERSION=0.138.0
+ARG GORELEASER_VERSION=0.139.0
 ARG GORELEASER_DOWNLOAD_FILE=goreleaser_Linux_x86_64.tar.gz
 ARG GORELEASER_DOWNLOAD_URL=https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/${GORELEASER_DOWNLOAD_FILE}
 
@@ -94,6 +94,9 @@ RUN wget ${GORELEASER_DOWNLOAD_URL}; \
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
+
+VOLUME /project
+WORKDIR /project
 
 ENTRYPOINT ["goreleaser"]
 CMD ["-v"]
