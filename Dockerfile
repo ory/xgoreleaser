@@ -80,7 +80,7 @@ RUN add-apt-repository \
        $(lsb_release -cs) \
        stable"
 RUN apt-get update -qq && apt-get  -y -q --no-install-recommends install docker-ce docker-ce-cli containerd.io
-RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -s
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -s
 RUN apt install nodejs
 
 ARG GORELEASER_VERSION=0.139.0
