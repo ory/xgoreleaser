@@ -32,11 +32,17 @@ To build this image using the CI, create a new release with the desired Golang v
 
 ## Testing Builds
 
+You can test a build using
+
 ```shell script
+$ docker pull oryd/xgoreleaser:latest
 $ docker run --mount type=bind,source="$(pwd)",target=/project \
-    oryd/xgoreleaser:latest --skip-publish --snapshot --rm-dist
+    v --skip-publish --snapshot --rm-dist
 ```
 
-```
-docker run --entrypoint /bin/bash -it oryd/xgoreleaser:1.14.4-0.139.0
+or exec into the container:
+
+```shell script
+$ docker run --mount type=bind,source="$(pwd)",target=/project \
+  --entrypoint /bin/bash -it oryd/xgoreleaser:latest
 ```
