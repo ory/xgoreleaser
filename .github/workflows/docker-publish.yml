@@ -1,0 +1,30 @@
+name: Docker
+
+on: 
+  workflow_dispatch:
+    inputs:
+      golang:
+        description: GoLang Version
+        required: true
+      goreleaser:
+        description: GoReleaser Version
+        required: true
+
+jobs:
+  # Push image to GitHub Packages.
+  # See also https://docs.docker.com/docker-hub/builds/
+  push:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build and push image
+        run: |
+          go_version="${{ github.event.inputs.golang }}"
+          goreleaser_version="${{ github.event.inputs.goreleaser }}"
+          docker build --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} -t oryd/xgoreleaser:${go_version}-${goreleaser_version} .
+          docker tag oryd/xgoreleaser:${go_version}-${goreleaser_version} oryd/xgoreleaser:latest
+          docker push oryd/xgoreleaser:${go_version}-${goreleaser_version}
+          docker push oryd/xgoreleaser:latest
