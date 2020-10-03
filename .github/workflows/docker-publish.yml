@@ -19,6 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          password: ${{ secrets.DOCKER_SECRET_AREKKAS }}
+
       - name: Build and push image
         run: |
           go_version="${{ github.event.inputs.golang }}"
