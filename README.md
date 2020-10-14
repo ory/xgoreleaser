@@ -37,7 +37,7 @@ You can test a build using
 ```shell script
 $ docker pull oryd/xgoreleaser:latest
 $ docker run --mount type=bind,source="$(pwd)",target=/project \
-    v --skip-publish --snapshot --rm-dist
+    oryd/xgoreleaser:latest --skip-publish --snapshot --rm-dist
 ```
 
 or exec into the container:
