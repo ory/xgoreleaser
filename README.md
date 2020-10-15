@@ -1,7 +1,9 @@
 # oryd/xgoreleaser
 
 This image is published as [oryd/xgoreleaser](https://hub.docker.com/repository/docker/oryd/xgoreleaser). It's tag (e.g. 1.13.5) reflects the Golang version used.
-This is a fork of [docker/golang-cross](https://github.com/docker/golang-cross).
+This is a fork of [docker/golang-cross](https://github.com/docker/golang-cross). Alternatives include:
+ 
+* [elastic/golang-crossbuild](https://github.com/elastic/golang-crossbuild)
 
 ## Build in CI
 
@@ -46,3 +48,8 @@ or exec into the container:
 $ docker run --mount type=bind,source="$(pwd)",target=/project \
   --entrypoint /bin/bash -it oryd/xgoreleaser:latest
 ```
+
+## Updating Dependencies
+
+Go tends to remove support for older macOS SDKs which requires re-packaging and uploading the macOS SDK
+to Google Cloud. To learn how to package it, check out [this guide](https://github.com/tpoechtrager/osxcross#packaging-the-sdk).
