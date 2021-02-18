@@ -1,7 +1,7 @@
 # oryd/xgoreleaser
 
 This image is published as
-[oryd/xgoreleaser](https://hub.docker.com/repository/docker/oryd/xgoreleaser).
+[oryd/xgoreleaser](https://hub.docker.com/r/oryd/xgoreleaser).
 It's tag (e.g. 1.13.5) reflects the Golang version used. This is a fork of
 [docker/golang-cross](https://github.com/docker/golang-cross). Alternatives
 include:
