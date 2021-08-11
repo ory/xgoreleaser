@@ -12,7 +12,7 @@ ARG OSX_CROSS_COMMIT=54891496834390779b54a90b541dbf03f520e581
 
 # Libtool parameters
 ARG LIBTOOL_VERSION=2.4.6
-ARG OSX_CODENAME=yosemite
+ARG OSX_CODENAME=big_sur
 
 FROM golang:${GO_VERSION}-buster AS base
 ARG APT_MIRROR
@@ -50,17 +50,17 @@ COPY --from=osx-sdk "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ARG OSX_VERSION_MIN
 RUN UNATTENDED=yes OSX_VERSION_MIN=${OSX_VERSION_MIN} ./build.sh
 
-FROM base AS libtool
+FROM osx-cross-base AS libtool
 ARG LIBTOOL_VERSION
 ARG OSX_CODENAME
 ARG OSX_SDK
 RUN mkdir -p "${OSX_CROSS_PATH}/target/SDK/${OSX_SDK}/usr/"
-RUN curl -fsSL "https://homebrew.bintray.com/bottles/libtool-${LIBTOOL_VERSION}.${OSX_CODENAME}.bottle.tar.gz" \
-	| gzip -dc | tar xf - \
-		-C "${OSX_CROSS_PATH}/target/SDK/${OSX_SDK}/usr/" \
-		--strip-components=2 \
-		"libtool/${LIBTOOL_VERSION}/include/" \
-		"libtool/${LIBTOOL_VERSION}/lib/"
+RUN curl -fsSL "https://ftp.gnu.org/gnu/libtool/libtool-${LIBTOOL_VERSION}.tar.xz" \
+    | tar -Jxvf - \
+        -C "${OSX_CROSS_PATH}/target/SDK/${OSX_SDK}/usr/" \
+        --strip-components=2 \
+        "libtool/${LIBTOOL_VERSION}/include/" \
+        "libtool/${LIBTOOL_VERSION}/lib/"
 
 FROM osx-cross-base AS final
 ARG DEBIAN_FRONTEND=noninteractive
@@ -76,6 +76,7 @@ RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
     software-properties-common \
     gettext \
     jq \
+    gzip \
  && rm -rf /var/lib/apt/lists/*
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
 RUN add-apt-repository \
@@ -91,8 +92,8 @@ ARG GORELEASER_DOWNLOAD_FILE=goreleaser_Linux_x86_64.tar.gz
 ARG GORELEASER_DOWNLOAD_URL=https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/${GORELEASER_DOWNLOAD_FILE}
 
 RUN wget ${GORELEASER_DOWNLOAD_URL}; \
-			tar -xzf $GORELEASER_DOWNLOAD_FILE -C /usr/bin/ goreleaser; \
-			rm $GORELEASER_DOWNLOAD_FILE;
+            tar -xzf $GORELEASER_DOWNLOAD_FILE -C /usr/bin/ goreleaser; \
+            rm $GORELEASER_DOWNLOAD_FILE;
 
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
