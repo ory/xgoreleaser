@@ -2,11 +2,8 @@ ARG GO_VERSION=1.15.2
 
 # OS-X SDK parameters
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
-ARG OSX_SDK=MacOSX10.15.sdk
-
-# To get the SHA sum do:
-# wget https://s3.dockerproject.org/darwin/v2/${OSX_SDK}.tar.xz
-ARG OSX_SDK_SUM=694a66095a3514328e970b14978dc78c0f4d170e590fa7b2c3d3674b75f0b713
+ARG OSX_SDK=MacOSX11.3.sdk
+ARG OSX_SDK_SUM=cd4f08a75577145b8f05245a2975f7c81401d75e9535dcffbb879ee1deefcbf4
 
 # OSX-cross parameters. Go 1.15 requires OSX >= 10.11
 ARG OSX_VERSION_MIN=10.15
@@ -26,8 +23,7 @@ ENV OSX_CROSS_PATH=/osxcross
 FROM base AS osx-sdk
 ARG OSX_SDK
 ARG OSX_SDK_SUM
-# This is generated from: https://github.com/tpoechtrager/osxcross#packaging-the-sdk
-ADD https://storage.googleapis.com/ory.sh/build-assets/MacOSX10.15.sdk.tar.xz "${OSX_CROSS_PATH}/tarballs/${OSX_SDK}.tar.xz"
+ADD https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz "${OSX_CROSS_PATH}/tarballs/${OSX_SDK}.tar.xz"
 #RUN echo "${OSX_SDK_SUM}"  "${OSX_CROSS_PATH}/tarballs/${OSX_SDK}.tar.xz" | sha256sum -c -
 
 FROM base AS osx-cross-base
