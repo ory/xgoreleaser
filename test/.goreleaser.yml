@@ -171,7 +171,7 @@ checksum:
   algorithm: sha256
 
 dockers:
-  - dockerfile: .docker/Dockerfile-sqlite
+  - dockerfile: .docker/Dockerfile
     ids:
       - kratos-sqlite-linux-libmusl
     use: buildx
