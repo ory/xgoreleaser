@@ -1,0 +1,17 @@
+
+name: build
+
+on: pull_request
+
+jobs:
+  goreleaser:
+    name: go
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker build -t  oryd/xgoreleaser:test-build .
+      - run: |
+          cd test
+          docker rm -f build || true
+          docker build -f .docker/Dockerfile-goreleaser -t build .
+          docker run build
