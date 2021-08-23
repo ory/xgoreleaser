@@ -197,6 +197,7 @@ dockers:
   - dockerfile: .docker/Dockerfile-sqlite
     ids:
       - kratos-sqlite-linux-libmusl
+    use: buildx
     image_templates:
       - "oryd/kratos:v{{ .Major }}-sqlite"
       - "oryd/kratos:v{{ .Major }}.{{ .Minor }}-sqlite"
@@ -206,6 +207,7 @@ dockers:
   - dockerfile: .docker/Dockerfile
     ids:
       - kratos
+    use: buildx
     image_templates:
       - "oryd/kratos:v{{ .Major }}"
       - "oryd/kratos:v{{ .Major }}.{{ .Minor }}"
