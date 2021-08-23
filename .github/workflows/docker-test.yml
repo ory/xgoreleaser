@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker build -t  oryd/xgoreleaser:test-build .
+      - run: docker build -t oryd/xgoreleaser:test-build .
       - run: |
           cd test
           docker rm -f build || true
           docker build -f .docker/Dockerfile-goreleaser -t build .
-          docker run build
+          docker run --cpus 2 --name build build
