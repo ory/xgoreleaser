@@ -114,11 +114,6 @@ archives:
       -
         goos: windows
         format: zip
-    files:
-      - CHANGELOG.md
-      - LICENSE
-      - README.md
-      - SECURITY.md
     name_template: "{{ .ProjectName }}_{{ .Version }}-sqlite_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
 
   - id: kratos-sqlite-libmusl
@@ -133,11 +128,6 @@ archives:
       -
         goos: windows
         format: zip
-    files:
-      - CHANGELOG.md
-      - LICENSE
-      - README.md
-      - SECURITY.md
     name_template: "{{ .ProjectName }}_{{ .Version }}-sqlite-libmusl_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
 
   - id: kratos
@@ -151,22 +141,9 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
-    files:
-      - CHANGELOG.md
-      - LICENSE
-      - README.md
-      - SECURITY.md
 
 snapshot:
   name_template: "{{ .Tag }}-next"
-
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - ci skip
-      - Merge pull request
-      - Merge branch
 
 brews:
   - tap:
