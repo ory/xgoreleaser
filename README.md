@@ -26,12 +26,16 @@ to build and publish the image. **Do not use `v` prefixes in the version!**
 To build this image, run locally:
 
 ```shell script
-go_version=1.15.2
-goreleaser_version=0.143.0
+# Enable Docker experimental features and buildx
+export DOCKER_CLI_EXPERIMENTAL=enabled
+docker buildx create --use
+
+go_version=1.17.2
+goreleaser_version=0.184.0
 docker buildx build \
   --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} \
+  --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
   -t oryd/xgoreleaser:${go_version}-${goreleaser_version} .
-  --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \ --tag your-username/multiarch-example:buildx-latest .
 
 docker tag oryd/xgoreleaser:${go_version}-${goreleaser_version} oryd/xgoreleaser:latest
 docker push oryd/xgoreleaser:${go_version}-${goreleaser_version}

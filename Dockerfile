@@ -80,10 +80,16 @@ RUN curl -L --globoff --show-error --user-agent Homebrew/3.2.9\ \(Macintosh\;\ I
 
 FROM osx-cross-base AS final
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
+
+RUN curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
+RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -s
+RUN dpkg --add-architecture arm64 \
+  && dpkg --add-architecture amd64 \
+  && apt-get update -qq \
+  && apt-get upgrade -y \
+  && apt-get install -y -q --no-install-recommends \
     libltdl-dev \
     gcc-mingw-w64 \
-    musl-tools \
     parallel \
     apt-transport-https \
     ca-certificates \
@@ -92,16 +98,17 @@ RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
     software-properties-common \
     gettext \
     jq \
- && rm -rf /var/lib/apt/lists/* \
-RUN apt-get update && apt-get upgrade
-RUN curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
-RUN apt-get update -qq && apt-get  -y -q --no-install-recommends install docker-ce docker-ce-cli containerd.io
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -s
-RUN apt install nodejs
+    nodejs \
+    docker-ce docker-ce-cli containerd.io \
+  && apt-get install -y -q --no-install-recommends \
+    musl-tools:arm64 gcc:arm64 cpp:arm64 gcc-8:arm64 binutils:arm64 \
+  && apt-get install -y -q --no-install-recommends \
+    musl-tools:amd64 gcc:amd64 cpp:amd64 gcc-8:amd64 binutils:amd64 \
+  && rm -rf /var/lib/apt/lists/*
 
 ARG GORELEASER_VERSION=0.175.0
 
-RUN go install github.com/goreleaser/goreleaser@v${GORELEASER_VERSION}
+RUN CGO_ENABLED=0 go install github.com/goreleaser/goreleaser@v${GORELEASER_VERSION}
 
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"

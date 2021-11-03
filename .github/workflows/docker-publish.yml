@@ -28,12 +28,14 @@ jobs:
 
       - name: Build and push image
         run: |
+          export DOCKER_CLI_EXPERIMENTAL=enabled
+          docker buildx create --use
           go_version="${{ github.event.inputs.golang }}"
           goreleaser_version="${{ github.event.inputs.goreleaser }}"
           docker buildx build \
             --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} \
+            --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
             -t oryd/xgoreleaser:${go_version}-${goreleaser_version} .
-            --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \ --tag your-username/multiarch-example:buildx-latest .
           docker tag oryd/xgoreleaser:${go_version}-${goreleaser_version} oryd/xgoreleaser:latest
           docker push oryd/xgoreleaser:${go_version}-${goreleaser_version}
           docker push oryd/xgoreleaser:latest
