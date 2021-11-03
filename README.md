@@ -28,7 +28,11 @@ To build this image, run locally:
 ```shell script
 go_version=1.15.2
 goreleaser_version=0.143.0
-docker build --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} -t oryd/xgoreleaser:${go_version}-${goreleaser_version} .
+docker buildx build \
+  --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} \
+  -t oryd/xgoreleaser:${go_version}-${goreleaser_version} .
+  --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \ --tag your-username/multiarch-example:buildx-latest .
+
 docker tag oryd/xgoreleaser:${go_version}-${goreleaser_version} oryd/xgoreleaser:latest
 docker push oryd/xgoreleaser:${go_version}-${goreleaser_version}
 docker push oryd/xgoreleaser:latest
