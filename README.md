@@ -52,6 +52,7 @@ You can test a build using
 ```shell script
 $ docker pull oryd/xgoreleaser:latest
 $ docker run --mount type=bind,source="$(pwd)",target=/project \
+    --platform linux/amd64 \
     -v /var/run/docker.sock:/var/run/docker.sock \
     oryd/xgoreleaser:latest --skip-publish --snapshot --rm-dist
 ```
@@ -60,6 +61,7 @@ or exec into the container:
 
 ```shell script
 $ docker run --mount type=bind,source="$(pwd)",target=/project \
+  --platform linux/amd64 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   --entrypoint /bin/bash -it oryd/xgoreleaser:latest
 ```
