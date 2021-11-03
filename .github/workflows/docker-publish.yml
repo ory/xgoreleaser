@@ -34,7 +34,7 @@ jobs:
           goreleaser_version="${{ github.event.inputs.goreleaser }}"
           docker buildx build \
             --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} \
-            --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+            --platform linux/amd64 \
             -t oryd/xgoreleaser:${go_version}-${goreleaser_version} .
           docker tag oryd/xgoreleaser:${go_version}-${goreleaser_version} oryd/xgoreleaser:latest
           docker push oryd/xgoreleaser:${go_version}-${goreleaser_version}
