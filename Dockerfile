@@ -1,3 +1,4 @@
+ARG ARCH=
 ARG GO_VERSION=1.17
 
 # OS-X SDK parameters
@@ -26,7 +27,7 @@ ARG LIBTOOL_VERSION=2.4.6_4
 ARG LIBTOOL_SHA=dfb94265706b7204b346e3e5d48e149d7c7870063740f0c4ab2d6ec971260517
 ARG OSX_CODENAME=big_sur
 
-FROM golang:${GO_VERSION}-buster AS base
+FROM ${ARCH}golang:${GO_VERSION}-buster AS base
 ARG APT_MIRROR
 RUN sed -ri "s/(httpredir|deb).debian.org/${APT_MIRROR:-deb.debian.org}/g" /etc/apt/sources.list \
  && sed -ri "s/(security).debian.org/${APT_MIRROR:-security.debian.org}/g" /etc/apt/sources.list
@@ -91,28 +92,20 @@ RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
     software-properties-common \
     gettext \
     jq \
- && rm -rf /var/lib/apt/lists/*
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
-RUN add-apt-repository \
-       "deb [arch=amd64] https://download.docker.com/linux/debian \
-       $(lsb_release -cs) \
-       stable"
+ && rm -rf /var/lib/apt/lists/* \
+RUN apt-get update && apt-get upgrade
+RUN curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
 RUN apt-get update -qq && apt-get  -y -q --no-install-recommends install docker-ce docker-ce-cli containerd.io
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -s
 RUN apt install nodejs
 
 ARG GORELEASER_VERSION=0.175.0
-ARG GORELEASER_DOWNLOAD_FILE=goreleaser_Linux_x86_64.tar.gz
-ARG GORELEASER_DOWNLOAD_URL=https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/${GORELEASER_DOWNLOAD_FILE}
 
-RUN wget ${GORELEASER_DOWNLOAD_URL}; \
-			tar -xzf $GORELEASER_DOWNLOAD_FILE -C /usr/bin/ goreleaser; \
-			rm $GORELEASER_DOWNLOAD_FILE;
+RUN go install github.com/goreleaser/goreleaser@v${GORELEASER_VERSION}
 
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
-
 VOLUME /project
 WORKDIR /project
 
