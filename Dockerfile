@@ -1,9 +1,8 @@
-ARG ARCH=
 ARG GO_VERSION=1.17
 
 # OS-X SDK parameters
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
-ARG OSX_SDK=MacOSX11.3.sdk
+ARG OSX_SDK=MacOSX12.0.sdk
 
 # To get the SHA sum do:
 # wget https://s3.dockerproject.org/darwin/v2/${OSX_SDK}.tar.xz
@@ -13,9 +12,9 @@ ARG OSX_SDK=MacOSX11.3.sdk
 # ARG OSX_SDK_SUM=694a66095a3514328e970b14978dc78c0f4d170e590fa7b2c3d3674b75f0b713
 
 # OSX-cross parameters. Go 1.15 requires OSX >= 10.11
-ARG OSX_VERSION_MIN=11.3
+ARG OSX_VERSION_MIN=12.0
 # Choose latest commit from here: https://github.com/tpoechtrager/osxcross/commits/master/CHANGELOG
-ARG OSX_CROSS_COMMIT=3351f5573c5c3f38a28a82df1ae09cad6d70f83d
+ARG OSX_CROSS_COMMIT=e59a63461da2cbc20cb0a5bbfc954730e50a5472
 
 # Libtool parameters
 ARG LIBTOOL_VERSION=2.4.6_4
@@ -27,7 +26,7 @@ ARG LIBTOOL_VERSION=2.4.6_4
 ARG LIBTOOL_SHA=dfb94265706b7204b346e3e5d48e149d7c7870063740f0c4ab2d6ec971260517
 ARG OSX_CODENAME=big_sur
 
-FROM ${ARCH}golang:${GO_VERSION}-buster AS base
+FROM golang:${GO_VERSION}-buster AS base
 ARG APT_MIRROR
 RUN sed -ri "s/(httpredir|deb).debian.org/${APT_MIRROR:-deb.debian.org}/g" /etc/apt/sources.list \
  && sed -ri "s/(security).debian.org/${APT_MIRROR:-security.debian.org}/g" /etc/apt/sources.list
@@ -80,10 +79,16 @@ RUN curl -L --globoff --show-error --user-agent Homebrew/3.2.9\ \(Macintosh\;\ I
 
 FROM osx-cross-base AS final
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
+
+RUN curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
+RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -s
+RUN dpkg --add-architecture arm64 \
+  && dpkg --add-architecture amd64 \
+  && apt-get update -qq \
+  && apt-get upgrade -y \
+  && apt-get install -y -q --no-install-recommends \
     libltdl-dev \
     gcc-mingw-w64 \
-    musl-tools \
     parallel \
     apt-transport-https \
     ca-certificates \
@@ -92,16 +97,17 @@ RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
     software-properties-common \
     gettext \
     jq \
- && rm -rf /var/lib/apt/lists/* \
-RUN apt-get update && apt-get upgrade
-RUN curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
-RUN apt-get update -qq && apt-get  -y -q --no-install-recommends install docker-ce docker-ce-cli containerd.io
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -s
-RUN apt install nodejs
+    nodejs \
+    docker-ce docker-ce-cli containerd.io \
+  && apt-get install -y -q --no-install-recommends \
+    musl-tools:arm64 gcc:arm64 cpp:arm64 gcc-8:arm64 binutils:arm64 \
+  && apt-get install -y -q --no-install-recommends \
+    musl-tools:amd64 gcc:amd64 cpp:amd64 gcc-8:amd64 binutils:amd64 \
+  && rm -rf /var/lib/apt/lists/*
 
 ARG GORELEASER_VERSION=0.175.0
 
-RUN go install github.com/goreleaser/goreleaser@v${GORELEASER_VERSION}
+RUN CGO_ENABLED=0 go install github.com/goreleaser/goreleaser@v${GORELEASER_VERSION}
 
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
