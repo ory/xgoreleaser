@@ -14,7 +14,7 @@ ARG OSX_SDK=MacOSX11.3.sdk
 # OSX-cross parameters. Go 1.15 requires OSX >= 10.11
 ARG OSX_VERSION_MIN=11.3
 # Choose latest commit from here: https://github.com/tpoechtrager/osxcross/commits/master/CHANGELOG
-ARG OSX_CROSS_COMMIT=e59a63461da2cbc20cb0a5bbfc954730e50a5472
+ARG OSX_CROSS_COMMIT=3351f5573c5c3f38a28a82df1ae09cad6d70f83d
 
 # Libtool parameters
 ARG LIBTOOL_VERSION=2.4.6_4
@@ -115,6 +115,7 @@ RUN CGO_ENABLED=0 go install github.com/goreleaser/goreleaser@v${GORELEASER_VERS
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
+
 VOLUME /project
 WORKDIR /project
 
