@@ -2,7 +2,7 @@ ARG GO_VERSION=1.17
 
 # OS-X SDK parameters
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
-ARG OSX_SDK=MacOSX12.0.sdk
+ARG OSX_SDK=MacOSX11.3.sdk
 
 # To get the SHA sum do:
 # wget https://s3.dockerproject.org/darwin/v2/${OSX_SDK}.tar.xz
@@ -12,7 +12,7 @@ ARG OSX_SDK=MacOSX12.0.sdk
 # ARG OSX_SDK_SUM=694a66095a3514328e970b14978dc78c0f4d170e590fa7b2c3d3674b75f0b713
 
 # OSX-cross parameters. Go 1.15 requires OSX >= 10.11
-ARG OSX_VERSION_MIN=12.0
+ARG OSX_VERSION_MIN=11.3
 # Choose latest commit from here: https://github.com/tpoechtrager/osxcross/commits/master/CHANGELOG
 ARG OSX_CROSS_COMMIT=e59a63461da2cbc20cb0a5bbfc954730e50a5472
 
