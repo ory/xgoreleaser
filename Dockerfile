@@ -98,6 +98,7 @@ RUN dpkg --add-architecture arm64 \
     gettext \
     jq \
     nodejs \
+    gcc-aarch64-linux-gnu \
     docker-ce docker-ce-cli containerd.io \
   && apt-get install -y -q --no-install-recommends \
     musl-tools:arm64 gcc:arm64 cpp:arm64 gcc-8:arm64 binutils:arm64 \
