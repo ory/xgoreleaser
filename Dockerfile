@@ -82,11 +82,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
 RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -s
-RUN dpkg --add-architecture arm64 \
-  && dpkg --add-architecture amd64 \
-  && apt-get update -qq \
+RUN apt-get update -y \
   && apt-get upgrade -y \
-  && apt-get install -y -q --no-install-recommends \
+  && apt-get install -y --no-install-recommends \
     libltdl-dev \
     gcc-mingw-w64 \
     parallel \
@@ -99,13 +97,11 @@ RUN dpkg --add-architecture arm64 \
     jq \
     nodejs \
     docker-ce docker-ce-cli containerd.io \
-  && apt-get install -y -q --no-install-recommends \
-    musl-tools:arm64 gcc:arm64 cpp:arm64 gcc-8:arm64 binutils:arm64 \
-  && apt-get install -y -q --no-install-recommends \
-    musl-tools:amd64 gcc:amd64 cpp:amd64 gcc-8:amd64 binutils:amd64 \
-  && apt-get install -y -q \
-    gcc-aarch64-linux-gnu:amd64 \
-    gcc-arm-linux-gnueabihf:amd64 \
+    musl-tools gcc cpp gcc-8 binutils \
+  && apt-get update -y \
+  && apt-get install -y \
+    gcc-aarch64-linux-gnu \
+    gcc-arm-linux-gnueabihf \
   && rm -rf /var/lib/apt/lists/*
 
 ARG GORELEASER_VERSION=0.175.0
