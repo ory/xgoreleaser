@@ -72,3 +72,8 @@ uploading the macOS SDK to Google Cloud. To learn how to package it, check out
 [this guide](https://github.com/tpoechtrager/osxcross#packaging-the-sdk). Next,
 upload the generated file and mark it public in this
 [Google Cloud Storage Bucket](https://console.cloud.google.com/storage/browser/ory.sh/build-assets?project=ory-web).
+
+## Upading Build Template
+
+The [build template](./build.tmpl.yml) is ingested by all projects (e.g. Ory
+Kratos) and modified slightly to fit the needs of the project.
