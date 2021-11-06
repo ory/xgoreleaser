@@ -21,6 +21,25 @@ to build and publish the image. **Do not use `v` prefixes in the version!**
 
 ![Workflow parameters](.github/workflow.png)
 
+## Using the Build Tempalte
+
+```yml
+# Include the base config
+includes:
+  - from_file:
+      path: https://raw.githubusercontent.com/ory/xgoreleaser/master/build.tmpl.yml
+
+variables:
+  # The name of the brew tap formula:
+  # 
+  # brew install ory/tap/<brew_name>
+  brew_name: cli
+
+# The name of the project (e.g. kratos, ory, ...). Used
+# to name the binary, docker images, etc.
+project_name: ory
+```
+
 ## Building Locally
 
 To build this image, run locally:
@@ -73,7 +92,7 @@ uploading the macOS SDK to Google Cloud. To learn how to package it, check out
 upload the generated file and mark it public in this
 [Google Cloud Storage Bucket](https://console.cloud.google.com/storage/browser/ory.sh/build-assets?project=ory-web).
 
-## Upading Build Template
+## Updating Build Template
 
 The [build template](./build.tmpl.yml) is ingested by all projects (e.g. Ory
 Kratos) and modified slightly to fit the needs of the project.
