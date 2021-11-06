@@ -108,6 +108,13 @@ ARG GORELEASER_VERSION=0.175.0
 
 RUN CGO_ENABLED=0 go install github.com/goreleaser/goreleaser@v${GORELEASER_VERSION}
 
+RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}-pro/goreleaser-pro_Linux_x86_64.tar.gz" \
+    && mkdir -p goreleaser-pro_Linux_x86_64 \
+    && tar -xvf goreleaser-pro_Linux_x86_64.tar.gz -C goreleaser-pro_Linux_x86_64 \
+    && mv goreleaser-pro_Linux_x86_64/goreleaser /usr/local/bin/goreleaser-pro \
+    && rm -rf goreleaser-pro_Linux_x86_64.* goreleaser-pro_Linux_x86_64/ \
+    && goreleaser-pro --version
+
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
@@ -115,5 +122,5 @@ ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 VOLUME /project
 WORKDIR /project
 
-ENTRYPOINT ["goreleaser"]
+ENTRYPOINT ["goreleaser-pro"]
 CMD ["-v"]
