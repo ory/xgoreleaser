@@ -118,6 +118,7 @@ RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser
     && goreleaser-oss --version
 
 RUN go install github.com/sigstore/cosign/cmd/cosign@v1.3.0
+RUN go install github.com/CycloneDX/cyclonedx-gomod@v1.0.0
 
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
