@@ -292,7 +292,6 @@ release:
     Artifacts can be verified with [cosign](https://github.com/sigstore/cosign) using [this public key]({{ . }}).
     {{ end }}
   extra_files:
-    - glob: /tmp/cosign.pub
     - glob: ./dist/*.bom.json
 
 dockers:
