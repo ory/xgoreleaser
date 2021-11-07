@@ -1,3 +1,10 @@
+variables:
+  brew_name: ""
+  brew_description: ""
+  buildinfo_hash: ""
+  buildinfo_tag: ""
+  buildinfo_date: ""
+
 env:
   - GO111MODULE=on
 
@@ -7,8 +14,8 @@ before:
     - git checkout -- go.sum
 
 universal_binaries:
-- id: macos-cgo
-  replace: false
+  - id: macos-cgo
+    replace: false
 
 builds:
   -
@@ -17,7 +24,7 @@ builds:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X github.com/ory/cli/buildinfo.Version={{.Tag}} -X github.com/ory/cli/buildinfo.GitHash={{.FullCommit}} -X github.com/ory/cli/buildinfo.Time={{.Date}}"
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -35,7 +42,7 @@ builds:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X github.com/ory/cli/buildinfo.Version={{.Tag}} -X github.com/ory/cli/buildinfo.GitHash={{.FullCommit}} -X github.com/ory/cli/buildinfo.Time={{.Date}}"
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -50,7 +57,7 @@ builds:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X github.com/ory/cli/buildinfo.Version={{.Tag}} -X github.com/ory/cli/buildinfo.GitHash={{.FullCommit}} -X github.com/ory/cli/buildinfo.Time={{.Date}}"
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -66,7 +73,7 @@ builds:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X github.com/ory/cli/buildinfo.Version={{.Tag}} -X github.com/ory/cli/buildinfo.GitHash={{.FullCommit}} -X github.com/ory/cli/buildinfo.Time={{.Date}}"
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -86,7 +93,7 @@ builds:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X github.com/ory/cli/buildinfo.Version={{.Tag}} -X github.com/ory/cli/buildinfo.GitHash={{.FullCommit}} -X github.com/ory/cli/buildinfo.Time={{.Date}}"
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -102,7 +109,7 @@ builds:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X github.com/ory/cli/buildinfo.Version={{.Tag}} -X github.com/ory/cli/buildinfo.GitHash={{.FullCommit}} -X github.com/ory/cli/buildinfo.Time={{.Date}}"
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -116,7 +123,7 @@ builds:
   -
     id: default
     ldflags:
-      - "-s -w -X github.com/ory/cli/buildinfo.Version={{.Tag}} -X github.com/ory/cli/buildinfo.GitHash={{.FullCommit}} -X github.com/ory/cli/buildinfo.Time={{.Date}}"
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=0
@@ -137,7 +144,7 @@ builds:
 archives:
   - id: windows-cgo
     builds:
-    - windows-cgo
+      - windows-cgo
     replacements:
       darwin: macOS
       386: 32bit
@@ -161,9 +168,9 @@ archives:
 
   - id: linux-cgo
     builds:
-    - linux-cgo-arm64
-    - linux-cgo-amd64
-    - linux-cgo-arm
+      - linux-cgo-arm64
+      - linux-cgo-amd64
+      - linux-cgo-arm
     replacements:
       darwin: macOS
       386: 32bit
@@ -205,8 +212,8 @@ changelog:
 
 brews:
   -
-    name: {{ .brew_name }}
-    description: Interface with Ory using this CLI!
+    name: "{{ .brew_name }}"
+    description: "{{ .brew_description }}"
     license: "Apache-2.0"
     tap:
       owner: ory

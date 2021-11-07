@@ -26,14 +26,27 @@ to build and publish the image. **Do not use `v` prefixes in the version!**
 ```yml
 # Include the base config
 includes:
-  - from_file:
-      path: https://raw.githubusercontent.com/ory/xgoreleaser/master/build.tmpl.yml
+  - from_url:
+      url: https://raw.githubusercontent.com/ory/xgoreleaser/master/build.tmpl.yml
 
 variables:
   # The name of the brew tap formula:
   # 
   # brew install ory/tap/<brew_name>
   brew_name: cli
+
+  # The description of the brew formula:
+  brew_description: ""
+  
+  # The variable where we store the build's git hash
+  buildinfo_hash: "github.com/ory/cli/buildinfo.GitHash"
+
+  # The variable where we store the build's version
+  buildinfo_tag: "github.com/ory/cli/buildinfo.Version"
+
+  # The variable where we store the build's time
+  buildinfo_date: "github.com/ory/cli/buildinfo.Time"
+
 
 # The name of the project (e.g. kratos, ory, ...). Used
 # to name the binary, docker images, etc.
