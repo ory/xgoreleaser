@@ -286,12 +286,14 @@ scoop:
 
 release:
   prerelease: auto
+  name_template: "{{.Tag}}"
   footer: |
     {{ with .pubkey }}
     Artifacts can be verified with [cosign](https://github.com/sigstore/cosign) using [this public key]({{ . }}).
     {{ end }}
   extra_files:
     - glob: /tmp/cosign.pub
+    - glob: ./dist/*.bom.json
 
 dockers:
   - image_templates:
