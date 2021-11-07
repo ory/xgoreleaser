@@ -12,7 +12,6 @@ env:
 before:
   hooks:
     - go mod download
-    - go install github.com/CycloneDX/cyclonedx-gomod@v1.0.0
     - git checkout -- go.sum go.mod
     - curl -Lo /tmp/cosign.key https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.key
     - curl -Lo /tmp/cosign.pub https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub
