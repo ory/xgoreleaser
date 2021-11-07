@@ -117,6 +117,8 @@ RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser
     && goreleaser --version \
     && goreleaser-oss --version
 
+RUN go install github.com/sigstore/cosign/cmd/cosign@v1.3.0
+
 COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
