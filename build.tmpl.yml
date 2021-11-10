@@ -4,6 +4,7 @@ variables:
   buildinfo_hash: ""
   buildinfo_tag: ""
   buildinfo_date: ""
+  dockerfile: "Dockerfile"
   pub_key: "https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub"
 
 env:
@@ -298,7 +299,7 @@ dockers:
   - image_templates:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64"
     use: buildx
-    dockerfile: Dockerfile
+    dockerfile: {{.dockerfile}}
     goarch: amd64
     ids:
       - linux-cgo-amd64
@@ -309,7 +310,7 @@ dockers:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64"
     use: buildx
     goarch: arm64
-    dockerfile: Dockerfile
+    dockerfile: {{.dockerfile}}
     ids:
       - linux-cgo-arm64
     build_flag_templates:
@@ -320,7 +321,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 7
-    dockerfile: Dockerfile
+    dockerfile: {{.dockerfile}}
     ids:
       - linux-cgo-arm
     build_flag_templates:
@@ -331,7 +332,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 6
-    dockerfile: Dockerfile
+    dockerfile: {{.dockerfile}}
     ids:
       - linux-cgo-arm
     build_flag_templates:
