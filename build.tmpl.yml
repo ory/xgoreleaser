@@ -39,7 +39,7 @@ builds:
   -
     id: macos-cgo
     flags:
-      - -tags=sqlite,hsm,json1
+      - "-tags=sqlite,hsm,json1"
     ldflags:
       - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
@@ -60,7 +60,7 @@ builds:
   -
     id: linux-cgo-amd64
     flags:
-      - -tags=sqlite,hsm,json1
+      - "-tags=sqlite,hsm,json1"
     ldflags:
       - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
@@ -78,7 +78,7 @@ builds:
   -
     id: linux-cgo-arm64
     flags:
-      - -tags=sqlite,hsm,json1
+      - "-tags=sqlite,hsm,json1"
     ldflags:
       - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
@@ -97,7 +97,7 @@ builds:
   -
     id: linux-cgo-arm
     flags:
-      - -tags=sqlite,hsm,json1
+      - "-tags=sqlite,hsm,json1"
     ldflags:
       - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
@@ -120,7 +120,7 @@ builds:
   -
     id: alpine-cgo
     flags:
-      - -tags=sqlite,hsm,json1
+      - "-tags=sqlite,hsm,json1"
     ldflags:
       - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
@@ -139,7 +139,7 @@ builds:
   -
     id: windows-cgo
     flags:
-      - -tags=sqlite,hsm,json1
+      - "-tags=sqlite,hsm,json1"
     ldflags:
       - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
