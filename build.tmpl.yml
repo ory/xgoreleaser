@@ -157,6 +157,30 @@ builds:
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   -
+    id: alpine-cgo-arm
+    flags:
+      - -tags
+      - sqlite
+    ldflags:
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+    binary: "{{ .ProjectName }}"
+    env:
+      - CGO_ENABLED=1
+      - CC=arm-linux-musleabihf-gcc
+    goarch:
+      - arm
+    goarm:
+      - 5
+      - 6
+      - 7
+    goos:
+      - linux
+    hooks:
+      post:
+        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+
+  -
     id: windows-cgo
     flags:
       - "-tags=sqlite,hsm,json1"
@@ -244,6 +268,7 @@ archives:
     builds:
       - alpine-cgo-amd64
       - alpine-cgo-arm64
+      - alpine-cgo-arm
     replacements:
       darwin: macOS
       386: 32bit
@@ -330,6 +355,28 @@ dockers:
       - alpine-cgo-arm64
     build_flag_templates:
       - "--platform=linux/arm64"
+
+  - image_templates:
+      - "oryd/{{ .ProjectName }}:v{{ .Version }}-armv7"
+    use: buildx
+    goarch: arm
+    goarm: 7
+    dockerfile: "{{.dockerfile}}"
+    ids:
+      - alpine-cgo-arm
+    build_flag_templates:
+      - "--platform=linux/arm/v7"
+
+  - image_templates:
+      - "oryd/{{ .ProjectName }}:v{{ .Version }}-armv6"
+    use: buildx
+    goarch: arm
+    goarm: 6
+    dockerfile: "{{.dockerfile}}"
+    ids:
+      - linux-cgo-arm
+    build_flag_templates:
+      - "--platform=linux/arm/v6"
 
 docker_manifests:
   # You can have multiple Docker manifests.
