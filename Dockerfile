@@ -134,7 +134,7 @@ ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 RUN curl -O https://musl.cc/aarch64-linux-musl-cross.tgz \
     && tar xzf aarch64-linux-musl-cross.tgz \
     && mv aarch64-linux-musl-cross/bin/* /usr/bin \
-    && rm -rf aarch64-linux-musl-cross \
+    && rm -rf aarch64-linux-musl-cross
 
 RUN curl -O https://musl.cc/arm-linux-musleabihf-cross.tgz \
     && tar xzf arm-linux-musleabihf-cross.tgz \
