@@ -166,7 +166,7 @@ builds:
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
-      - CC=gcc-arm-linux-gnueabihf
+      - CC=arm-linux-musleabihf-gcc
     goarch:
       - arm
     goarm:
@@ -266,7 +266,8 @@ archives:
 
   - id: alpine-cgo
     builds:
-      - alpine-cgo
+      - alpine-cgo-amd64
+      - alpine-cgo-arm64
     replacements:
       darwin: macOS
       386: 32bit

@@ -131,6 +131,16 @@ COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
+RUN curl -O https://musl.cc/aarch64-linux-musl-cross.tgz \
+    && tar xzf aarch64-linux-musl-cross.tgz \
+    && mv aarch64-linux-musl-cross/bin/* /usr/bin \
+    && rm -rf aarch64-linux-musl-cross \
+
+RUN curl -O https://musl.cc/arm-linux-musleabihf-cross.tgz \
+    && tar xzf arm-linux-musleabihf-cross.tgz \
+    && mv arm-linux-musleabihf-cross/bin/* /usr/bin \
+    && rm -rf arm-linux-musleabihf-cross
+
 VOLUME /project
 WORKDIR /project
 
