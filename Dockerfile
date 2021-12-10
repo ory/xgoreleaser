@@ -97,7 +97,7 @@ RUN apt-get update -y \
     jq \
     nodejs \
     docker-ce docker-ce-cli containerd.io \
-    gcc cpp gcc-8 binutils \
+    musl-dev gcc cpp gcc-8 binutils \
   && apt-get update -y \
   && apt-get install -y \
     gcc-aarch64-linux-gnu \

@@ -62,8 +62,8 @@ To build this image, run locally:
 export DOCKER_CLI_EXPERIMENTAL=enabled
 docker buildx create --use
 
-go_version=1.17.2
-goreleaser_version=0.184.0
+go_version=1.17.5
+goreleaser_version=1.1.0
 docker buildx build \
   --load \
   --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} \
