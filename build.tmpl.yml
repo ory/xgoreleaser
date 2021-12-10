@@ -181,26 +181,6 @@ builds:
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   -
-    id: alpine-cgo-arm64
-    flags:
-      - -tags
-      - sqlite
-    ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-      - CC=aarch64-linux-musl-gcc
-    goarch:
-      - arm64
-    goos:
-      - linux
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
-  -
     id: windows-cgo
     flags:
       - "-tags=sqlite,hsm,json1"
