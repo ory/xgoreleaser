@@ -102,6 +102,7 @@ RUN apt-get update -y \
   && apt-get install -y \
     gcc-aarch64-linux-gnu \
     gcc-arm-linux-gnueabihf \
+  && apt-get install --reinstall build-essential \
   && rm -rf /var/lib/apt/lists/*
 
 # Install libusl with arm support which is only available on "bookworm"
@@ -133,13 +134,13 @@ ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
 RUN curl -O https://musl.cc/aarch64-linux-musl-cross.tgz \
     && tar xzf aarch64-linux-musl-cross.tgz \
-    && mv aarch64-linux-musl-cross/bin/* /usr/bin \
-    && rm -rf aarch64-linux-musl-cross
+    && mv aarch64-linux-musl-cross /aarch64-linux-musl-cross
 
 RUN curl -O https://musl.cc/arm-linux-musleabihf-cross.tgz \
     && tar xzf arm-linux-musleabihf-cross.tgz \
-    && mv arm-linux-musleabihf-cross/bin/* /usr/bin \
-    && rm -rf arm-linux-musleabihf-cross
+    && mv arm-linux-musleabihf-cross /arm-linux-musleabihf-cross
+
+ENV PATH=/aarch64-linux-musl-cross/bin:/arm-linux-musleabihf-cross/bin:$PATH
 
 VOLUME /project
 WORKDIR /project
