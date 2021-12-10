@@ -96,13 +96,13 @@ RUN apt-get update -y \
     gettext \
     jq \
     nodejs \
+    build-essential \
     docker-ce docker-ce-cli containerd.io \
     gcc cpp gcc-8 binutils \
   && apt-get update -y \
   && apt-get install -y \
     gcc-aarch64-linux-gnu \
     gcc-arm-linux-gnueabihf \
-  && apt-get install --reinstall build-essential \
   && rm -rf /var/lib/apt/lists/*
 
 # Install libusl with arm support which is only available on "bookworm"
