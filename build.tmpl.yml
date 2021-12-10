@@ -137,7 +137,7 @@ builds:
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   -
-    id: alpine-cgo-amd64
+    id: alpine-cgo-arm64
     flags:
       - -tags
       - sqlite
