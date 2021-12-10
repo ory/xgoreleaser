@@ -118,7 +118,7 @@ builds:
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   -
-    id: alpine-cgo
+    id: alpine-cgo-amd64
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
@@ -129,6 +129,70 @@ builds:
       - CC=musl-gcc
     goarch:
       - amd64
+    goos:
+      - linux
+    hooks:
+      post:
+        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+
+  -
+    id: alpine-cgo-arm64
+    flags:
+      - -tags
+      - sqlite
+    ldflags:
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+    binary: "{{ .ProjectName }}"
+    env:
+      - CGO_ENABLED=1
+      - CC=aarch64-linux-musl-gcc
+    goarch:
+      - arm64
+    goos:
+      - linux
+    hooks:
+      post:
+        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+
+  -
+    id: alpine-cgo-arm
+    flags:
+      - -tags
+      - sqlite
+    ldflags:
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+    binary: "{{ .ProjectName }}"
+    env:
+      - CGO_ENABLED=1
+      - CC=gcc-arm-linux-gnueabihf
+    goarch:
+      - arm
+    goarm:
+      - 5
+      - 6
+      - 7
+    goos:
+      - linux
+    hooks:
+      post:
+        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+
+  -
+    id: alpine-cgo-arm
+    flags:
+      - -tags
+      - sqlite
+    ldflags:
+      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+    binary: "{{ .ProjectName }}"
+    env:
+      - CGO_ENABLED=1
+      - CC=aarch64-linux-musl-gcc
+    goarch:
+      - arm64
     goos:
       - linux
     hooks:
@@ -296,7 +360,7 @@ dockers:
     dockerfile: "{{.dockerfile}}"
     goarch: amd64
     ids:
-      - linux-cgo-amd64
+      - alpine-cgo-amd64
     build_flag_templates:
       - "--platform=linux/amd64"
 
@@ -306,7 +370,7 @@ dockers:
     goarch: arm64
     dockerfile: "{{.dockerfile}}"
     ids:
-      - linux-cgo-arm64
+      - alpine-cgo-arm64
     build_flag_templates:
       - "--platform=linux/arm64"
 
@@ -317,7 +381,7 @@ dockers:
     goarm: 7
     dockerfile: "{{.dockerfile}}"
     ids:
-      - linux-cgo-arm
+      - alpine-cgo-arm
     build_flag_templates:
       - "--platform=linux/arm/v7"
 

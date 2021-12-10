@@ -97,11 +97,18 @@ RUN apt-get update -y \
     jq \
     nodejs \
     docker-ce docker-ce-cli containerd.io \
-    musl-tools gcc cpp gcc-8 binutils \
+    gcc cpp gcc-8 binutils \
   && apt-get update -y \
   && apt-get install -y \
     gcc-aarch64-linux-gnu \
     gcc-arm-linux-gnueabihf \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install libusl with arm support which is only available on "bookworm"
+RUN echo "deb http://ftp.us.debian.org/debian bookworm main" >> /etc/apt/sources.list
+RUN apt-get update -y \
+  && apt-get install -y \
+  musl-dev \
   && rm -rf /var/lib/apt/lists/*
 
 ARG GORELEASER_VERSION=0.175.0
