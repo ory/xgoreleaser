@@ -339,7 +339,7 @@ dockers:
   - image_templates:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64"
     use: buildx
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: .docker/Dockerfile-alpine
     goarch: amd64
     ids:
       - alpine-cgo-amd64
@@ -350,7 +350,7 @@ dockers:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64"
     use: buildx
     goarch: arm64
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: .docker/Dockerfile-alpine
     ids:
       - alpine-cgo-arm64
     build_flag_templates:
@@ -361,7 +361,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 7
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: .docker/Dockerfile-alpine
     ids:
       - alpine-cgo-arm
     build_flag_templates:
@@ -372,7 +372,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 6
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: .docker/Dockerfile-alpine
     ids:
       - linux-cgo-arm
     build_flag_templates:
