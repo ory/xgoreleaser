@@ -217,6 +217,7 @@ builds:
       - linux
       - windows
       - darwin
+      - freebsd
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
