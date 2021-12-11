@@ -389,6 +389,7 @@ docker_manifests:
     # Defaults to empty.
     image_templates:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
@@ -404,6 +405,7 @@ docker_manifests:
     # Defaults to empty.
     image_templates:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
@@ -419,6 +421,7 @@ docker_manifests:
     # Defaults to empty.
     image_templates:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
@@ -434,6 +437,7 @@ docker_manifests:
     # Defaults to empty.
     image_templates:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
@@ -449,5 +453,6 @@ docker_manifests:
     # Defaults to empty.
     image_templates:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-amd64"
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
