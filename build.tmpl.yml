@@ -353,7 +353,7 @@ dockers:
     ids:
       - alpine-cgo-arm64
     build_flag_templates:
-      - "--platform=linux/arm64"
+      - "--platform=linux/arm64/v8"
 
   - image_templates:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-armv7"
