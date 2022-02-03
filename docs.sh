@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euxo pipefail
+
 if [[ $(git describe --tags) == *"pre"* ]]; then
   echo "This is a pre-release, skipping docs publishing."
   exit 0

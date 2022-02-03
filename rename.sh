@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euxo pipefail
+
 # workaround script as goreleaser doesnt support 'replacements' in builds section
 # needed to adjust cyclonedx-gomod sbom files to match archive file names
 # https://github.com/goreleaser/goreleaser/issues/2617
