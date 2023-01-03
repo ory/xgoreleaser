@@ -1,3 +1,4 @@
+
 name: build
 
 on: pull_request
@@ -10,6 +11,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: docker build -t oryd/xgoreleaser:test-build .
       - run: |
+          cd test
           docker rm -f build || true
-          docker build -f ./test/.docker/Dockerfile-goreleaser -t build ./test
+          docker build -f .docker/Dockerfile-goreleaser -t build .
           docker run -v /var/run/docker.sock:/var/run/docker.sock --cpus 2 --name build build
