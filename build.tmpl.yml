@@ -46,7 +46,7 @@ builds:
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -66,7 +66,7 @@ builds:
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -83,7 +83,7 @@ builds:
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -101,7 +101,7 @@ builds:
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -122,7 +122,7 @@ builds:
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -141,7 +141,7 @@ builds:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -160,7 +160,7 @@ builds:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -181,7 +181,7 @@ builds:
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -198,7 +198,7 @@ builds:
 
   - id: default
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=0
@@ -286,8 +286,8 @@ changelog:
   sort: asc
 
 brews:
-  - name: "{{ .brew_name }}"
-    description: "{{ .brew_description }}"
+  - name: "{{ .Var.brew_name }}"
+    description: "{{ .Var.brew_description }}"
     license: "Apache-2.0"
     tap:
       owner: ory
@@ -317,7 +317,7 @@ release:
   prerelease: auto
   name_template: "{{ .Tag }}"
   footer: |
-    {{ with .pub_key }}
+    {{ with .Var.pub_key }}
     Artifacts can be verified with [cosign](https://github.com/sigstore/cosign) using [this public key]({{ . }}).
     {{ end }}
   extra_files:
@@ -327,7 +327,7 @@ dockers:
   - image_templates:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64"
     use: buildx
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile }}"
     goarch: amd64
     ids:
       - alpine-cgo-amd64
@@ -338,7 +338,7 @@ dockers:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64"
     use: buildx
     goarch: arm64
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile }}"
     ids:
       - alpine-cgo-arm64
     build_flag_templates:
@@ -349,7 +349,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 7
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile }}"
     ids:
       - alpine-cgo-arm
     build_flag_templates:
@@ -360,7 +360,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 6
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile }}"
     ids:
       - linux-cgo-arm
     build_flag_templates:
