@@ -22,22 +22,27 @@ universal_binaries:
     replace: false
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 signs:
   - cmd: cosign
-    stdin: '{{ .Env.COSIGN_PWD }}'
-    args: ["sign-blob", "--key=/tmp/cosign.key", "--output=${signature}", "${artifact}"]
+    stdin: "{{ .Env.COSIGN_PWD }}"
+    args:
+      [
+        "sign-blob",
+        "--key=/tmp/cosign.key",
+        "--output=${signature}",
+        "${artifact}",
+      ]
     artifacts: checksum
 
 docker_signs:
   - artifacts: all
     args: ["sign", "--key=/tmp/cosign.key", "${artifact}"]
-    stdin: '{{ .Env.COSIGN_PWD }}'
+    stdin: "{{ .Env.COSIGN_PWD }}"
 
 builds:
-  -
-    id: macos-cgo
+  - id: macos-cgo
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
@@ -57,8 +62,7 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: linux-cgo-amd64
+  - id: linux-cgo-amd64
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
@@ -75,8 +79,7 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: linux-cgo-arm64
+  - id: linux-cgo-arm64
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
@@ -94,8 +97,7 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: linux-cgo-arm
+  - id: linux-cgo-arm
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
@@ -116,8 +118,7 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: alpine-cgo-amd64
+  - id: alpine-cgo-amd64
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
@@ -135,8 +136,7 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: alpine-cgo-arm64
+  - id: alpine-cgo-arm64
     flags:
       - -tags
       - sqlite
@@ -155,8 +155,7 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: alpine-cgo-arm
+  - id: alpine-cgo-arm
     flags:
       - -tags
       - sqlite
@@ -178,8 +177,7 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: windows-cgo
+  - id: windows-cgo
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
@@ -198,8 +196,7 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: default
+  - id: default
     ldflags:
       - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
@@ -296,8 +293,7 @@ changelog:
   sort: asc
 
 brews:
-  -
-    name: "{{ .brew_name }}"
+  - name: "{{ .brew_name }}"
     description: "{{ .brew_description }}"
     license: "Apache-2.0"
     tap:
@@ -309,7 +305,7 @@ brews:
     ids:
       - linux-cgo
       - macos-cgo
-    homepage:  https://www.ory.sh
+    homepage: https://www.ory.sh
     commit_author:
       name: aeneasr
       email: 3372410+aeneasr@users.noreply.github.com
@@ -379,8 +375,7 @@ dockers:
 
 docker_manifests:
   # You can have multiple Docker manifests.
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: tag
 
     # Name template for the manifest.
@@ -395,8 +390,7 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: major
 
     # Name template for the manifest.
@@ -411,8 +405,7 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: minor
 
     # Name template for the manifest.
@@ -427,8 +420,7 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: patch
 
     # Name template for the manifest.
@@ -443,8 +435,7 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: latest
 
     # Name template for the manifest.
