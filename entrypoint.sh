@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-set -euxo pipefail
+set -eo pipefail
 
-if [ -n $DOCKER_USERNAME ] && [ -n $DOCKER_PASSWORD ]; then
+if [ -z ${DOCKER_USERNAME+x} ] && [ -z ${DOCKER_PASSWORD+x} ]; then
     echo "Logging in to Docker"
     docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 fi
