@@ -112,18 +112,21 @@ RUN apt-get update -y \
   musl-tools \
   && rm -rf /var/lib/apt/lists/*
 
-ARG GORELEASER_VERSION=0.175.0
+ARG GORELEASER_VERSION=1.14.1
 
-RUN CGO_ENABLED=0 go install github.com/goreleaser/goreleaser@v${GORELEASER_VERSION}
-RUN mv $GOPATH/bin/goreleaser $GOPATH/bin/goreleaser-oss
+RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_x86_64.tar.gz \
+    && mkdir -p goreleaser_Linux_x86_64 \
+    && tar -xvf goreleaser_Linux_x86_64.tar.gz -C goreleaser_Linux_x86_64 \
+    && mv goreleaser_Linux_x86_64/goreleaser /usr/local/bin/goreleaser-oss \
+    && rm -rf goreleaser_Linux_x86_64.* goreleaser_Linux_x86_64/
 
 RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}-pro/goreleaser-pro_Linux_x86_64.tar.gz" \
     && mkdir -p goreleaser-pro_Linux_x86_64 \
     && tar -xvf goreleaser-pro_Linux_x86_64.tar.gz -C goreleaser-pro_Linux_x86_64 \
     && mv goreleaser-pro_Linux_x86_64/goreleaser /usr/local/bin/goreleaser \
-    && rm -rf goreleaser-pro_Linux_x86_64.* goreleaser-pro_Linux_x86_64/ \
-    && goreleaser --version \
-    && goreleaser-oss --version
+    && rm -rf goreleaser-pro_Linux_x86_64.* goreleaser-pro_Linux_x86_64/
+
+RUN goreleaser --version && goreleaser-oss --version
 
 RUN go install github.com/sigstore/cosign/cmd/cosign@v1.3.0
 RUN go install github.com/CycloneDX/cyclonedx-gomod@v1.0.0
