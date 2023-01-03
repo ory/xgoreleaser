@@ -225,66 +225,70 @@ archives:
   - id: windows-cgo
     builds:
       - windows-cgo
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
     format_overrides:
       - goos: windows
         format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_sqlite_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}-windows_sqlite_amd64
 
   - id: macos-cgo
     builds:
       - macos-cgo
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
-    format_overrides:
-      - goos: windows
-        format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_sqlite_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}-macos_sqlite_{{ if .Arch eq "amd64" }}64bit{{ else }}{{ .Arch }}{{ end }}
 
-  - id: linux-cgo
+  - id: linux-cgo-amd64
+    builds:
+      - linux-cgo-amd64
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_64bit
+
+  - id: linux-cgo-arm64
     builds:
       - linux-cgo-arm64
-      - linux-cgo-amd64
-      - linux-cgo-arm
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
-    format_overrides:
-      - goos: windows
-        format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_sqlite_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_arm64
 
-  - id: alpine-cgo
+  - id: linux-cgo-arm
+    builds:
+      - linux-cgo-arm
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_armv{{ .Arm }}
+
+  - id: alpine-cgo-amd64
     builds:
       - alpine-cgo-amd64
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_musl_64bit
+
+  - id: alpine-cgo-arm64
+    builds:
       - alpine-cgo-arm64
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_musl_arm64
+
+  - id: alpine-cgo-arm
+    builds:
       - alpine-cgo-arm
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
-    format_overrides:
-      - goos: windows
-        format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_sqlite_libmusl_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_musl_armv{{ .Arm }}
 
   - id: default
     builds:
       - default
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
     format_overrides:
       - goos: windows
         format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
 snapshot:
   name_template: "{{ .Tag }}-next"
