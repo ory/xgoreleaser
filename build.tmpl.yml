@@ -229,49 +229,113 @@ archives:
       - goos: windows
         format: zip
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-windows_sqlite_amd64
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}-sqlite_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: macos-cgo
     builds:
       - macos-cgo
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-macos_sqlite_{{ if .Arch eq "amd64" }}64bit{{ else }}{{ .Arch }}{{ end }}
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}-sqlite_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: linux-cgo-amd64
     builds:
       - linux-cgo-amd64
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_64bit
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}-sqlite_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: linux-cgo-arm64
     builds:
       - linux-cgo-arm64
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_arm64
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}-sqlite_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: linux-cgo-arm
     builds:
       - linux-cgo-arm
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_armv{{ .Arm }}
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}-sqlite_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: alpine-cgo-amd64
     builds:
       - alpine-cgo-amd64
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_musl_64bit
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}-sqlite-libmusl_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: alpine-cgo-arm64
     builds:
       - alpine-cgo-arm64
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_musl_arm64
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}-sqlite-libmusl_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: alpine-cgo-arm
     builds:
       - alpine-cgo-arm
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-linux_sqlite_musl_armv{{ .Arm }}
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if .Os eq "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}-sqlite-libmusl_
+      {{- if .Arch eq "amd64" }}64bit
+      {{- else if .Arch eq "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: default
     builds:

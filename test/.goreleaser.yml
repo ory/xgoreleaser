@@ -108,7 +108,7 @@ archives:
       {{- .Version }}-
       {{- if .Os eq "darwin" }}macOS
       {{- else }}{{ .Os }}
-      {{- end }}_sqlite_
+      {{- end }}-sqlite_
       {{- if .Arch eq "amd64" }}64bit
       {{- else if .Arch eq "386" }}32bit
       {{- else }}{{ .Arch }}{{ end }}
@@ -125,7 +125,7 @@ archives:
       {{- .Version }}-
       {{- if .Os eq "darwin" }}macOS
       {{- else }}{{ .Os }}
-      {{- end }}_sqlite_musl_
+      {{- end }}-sqlite-libmusl_
       {{- if .Arch eq "amd64" }}64bit
       {{- else if .Arch eq "386" }}32bit
       {{- else }}{{ .Arch }}{{ end }}
