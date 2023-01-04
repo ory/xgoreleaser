@@ -106,11 +106,11 @@ archives:
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
-      {{- if .Os eq "darwin" }}macOS
+      {{- if eq .Os "darwin" }}macOS
       {{- else }}{{ .Os }}
       {{- end }}-sqlite_
-      {{- if .Arch eq "amd64" }}64bit
-      {{- else if .Arch eq "386" }}32bit
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
@@ -123,11 +123,11 @@ archives:
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
-      {{- if .Os eq "darwin" }}macOS
+      {{- if eq .Os "darwin" }}macOS
       {{- else }}{{ .Os }}
       {{- end }}-sqlite-libmusl_
-      {{- if .Arch eq "amd64" }}64bit
-      {{- else if .Arch eq "386" }}32bit
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
@@ -140,11 +140,11 @@ archives:
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
-      {{- if .Os eq "darwin" }}macOS
+      {{- if eq .Os "darwin" }}macOS
       {{- else }}{{ .Os }}
       {{- end }}_
-      {{- if .Arch eq "amd64" }}64bit
-      {{- else if .Arch eq "386" }}32bit
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
