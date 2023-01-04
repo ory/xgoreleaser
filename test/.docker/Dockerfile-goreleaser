@@ -1,16 +1,15 @@
 FROM oryd/xgoreleaser:test-build
 
-WORKDIR /home/ory
+WORKDIR /home/ory/test
 
-ADD go.mod go.mod
-ADD go.sum go.sum
-
+ADD test/go.mod test/go.mod ./
 RUN go mod download
 
 ENV RELEASE_NAME=v0.0.0-alpha.1
 ENV DOCKER_SHORT_TAG=v0.0.0-alpha.1
 
-ADD . .
+ADD . /home/ory/
+
 ENTRYPOINT ["goreleaser"]
 CMD ["--snapshot", "--skip-publish", "--rm-dist"]
 
