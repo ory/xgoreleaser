@@ -7,6 +7,8 @@ variables:
 
   brew_description: "xgoreleaser test"
 
+  dockerfile: ".docker/Dockerfile"
+
   buildinfo_hash: "github.com/ory/xgoreleaser/test/main.GitHash"
   buildinfo_tag: "github.com/ory/xgoreleaser/test/main.Version"
   buildinfo_date: "github.com/ory/xgoreleaser/test/main.Time"
