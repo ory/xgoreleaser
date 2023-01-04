@@ -236,12 +236,16 @@ archives:
       {{- end }}_sqlite_
       {{- if eq .Arch "amd64" }}64bit
       {{- else if eq .Arch "386" }}32bit
+      {{- else if eq .Arch "arm" }}arm32
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: macos-cgo
     builds:
       - macos-cgo
+    format_overrides:
+      - goos: windows
+        format: zip
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
@@ -250,6 +254,7 @@ archives:
       {{- end }}_sqlite_
       {{- if eq .Arch "amd64" }}64bit
       {{- else if eq .Arch "386" }}32bit
+      {{- else if eq .Arch "arm" }}arm32
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
@@ -269,6 +274,7 @@ archives:
       {{- end }}_sqlite_
       {{- if eq .Arch "amd64" }}64bit
       {{- else if eq .Arch "386" }}32bit
+      {{- else if eq .Arch "arm" }}arm32
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
@@ -288,6 +294,7 @@ archives:
       {{- end }}_sqlite_libmusl_
       {{- if eq .Arch "amd64" }}64bit
       {{- else if eq .Arch "386" }}32bit
+      {{- else if eq .Arch "arm" }}arm32
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
@@ -305,6 +312,7 @@ archives:
       {{- end }}_
       {{- if eq .Arch "amd64" }}64bit
       {{- else if eq .Arch "386" }}32bit
+      {{- else if eq .Arch "arm" }}arm32
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
