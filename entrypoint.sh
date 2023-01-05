@@ -2,7 +2,7 @@
 
 set -euxo pipefail
 
-if [ -n $DOCKER_USERNAME ] && [ -n $DOCKER_PASSWORD ]; then
+if [ -n "${DOCKER_USERNAME+x}" ] && [ -n "${DOCKER_PASSWORD+x}" ]; then
     echo "Logging in to Docker"
     docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 fi

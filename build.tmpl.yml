@@ -22,26 +22,31 @@ universal_binaries:
     replace: false
 
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 
 signs:
   - cmd: cosign
-    stdin: '{{ .Env.COSIGN_PWD }}'
-    args: ["sign-blob", "--key=/tmp/cosign.key", "--output=${signature}", "${artifact}"]
+    stdin: "{{ .Env.COSIGN_PWD }}"
+    args:
+      [
+        "sign-blob",
+        "--key=/tmp/cosign.key",
+        "--output=${signature}",
+        "${artifact}",
+      ]
     artifacts: checksum
 
 docker_signs:
   - artifacts: all
     args: ["sign", "--key=/tmp/cosign.key", "${artifact}"]
-    stdin: '{{ .Env.COSIGN_PWD }}'
+    stdin: "{{ .Env.COSIGN_PWD }}"
 
 builds:
-  -
-    id: macos-cgo
+  - id: macos-cgo
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -57,12 +62,11 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: linux-cgo-amd64
+  - id: linux-cgo-amd64
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -75,12 +79,11 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: linux-cgo-arm64
+  - id: linux-cgo-arm64
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -94,12 +97,11 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: linux-cgo-arm
+  - id: linux-cgo-arm
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -116,12 +118,11 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: alpine-cgo-amd64
+  - id: alpine-cgo-amd64
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -135,13 +136,12 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: alpine-cgo-arm64
+  - id: alpine-cgo-arm64
     flags:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -155,13 +155,12 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: alpine-cgo-arm
+  - id: alpine-cgo-arm
     flags:
       - -tags
       - sqlite
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -178,12 +177,11 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: windows-cgo
+  - id: windows-cgo
     flags:
       - "-tags=sqlite,hsm,json1"
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
@@ -198,10 +196,9 @@ builds:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
-  -
-    id: default
+  - id: default
     ldflags:
-      - "-s -w -X {{.buildinfo_tag}}={{.Tag}} -X {{.buildinfo_hash}}={{.FullCommit}} -X {{.buildinfo_date}}={{.Date}}"
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=0
@@ -228,66 +225,91 @@ archives:
   - id: windows-cgo
     builds:
       - windows-cgo
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
     format_overrides:
       - goos: windows
         format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_sqlite_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_sqlite_
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: macos-cgo
     builds:
       - macos-cgo
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
     format_overrides:
       - goos: windows
         format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_sqlite_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_sqlite_
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: linux-cgo
     builds:
       - linux-cgo-arm64
       - linux-cgo-amd64
       - linux-cgo-arm
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
     format_overrides:
       - goos: windows
         format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_sqlite_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_sqlite_
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: alpine-cgo
     builds:
       - alpine-cgo-amd64
       - alpine-cgo-arm64
       - alpine-cgo-arm
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
     format_overrides:
       - goos: windows
         format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_sqlite_libmusl_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_sqlite_libmusl_
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
   - id: default
     builds:
       - default
-    replacements:
-      darwin: macOS
-      386: 32bit
-      amd64: 64bit
     format_overrides:
       - goos: windows
         format: zip
-    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
 
 snapshot:
   name_template: "{{ .Tag }}-next"
@@ -296,9 +318,8 @@ changelog:
   sort: asc
 
 brews:
-  -
-    name: "{{ .brew_name }}"
-    description: "{{ .brew_description }}"
+  - name: "{{ .Var.brew_name }}"
+    description: "{{ .Var.brew_description }}"
     license: "Apache-2.0"
     tap:
       owner: ory
@@ -309,7 +330,7 @@ brews:
     ids:
       - linux-cgo
       - macos-cgo
-    homepage:  https://www.ory.sh
+    homepage: https://www.ory.sh
     commit_author:
       name: aeneasr
       email: 3372410+aeneasr@users.noreply.github.com
@@ -328,7 +349,7 @@ release:
   prerelease: auto
   name_template: "{{ .Tag }}"
   footer: |
-    {{ with .pub_key }}
+    {{ with .Var.pub_key }}
     Artifacts can be verified with [cosign](https://github.com/sigstore/cosign) using [this public key]({{ . }}).
     {{ end }}
   extra_files:
@@ -338,7 +359,7 @@ dockers:
   - image_templates:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64"
     use: buildx
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile }}"
     goarch: amd64
     ids:
       - alpine-cgo-amd64
@@ -349,7 +370,7 @@ dockers:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64"
     use: buildx
     goarch: arm64
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile }}"
     ids:
       - alpine-cgo-arm64
     build_flag_templates:
@@ -360,7 +381,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 7
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile }}"
     ids:
       - alpine-cgo-arm
     build_flag_templates:
@@ -371,7 +392,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 6
-    dockerfile: "{{ .dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile }}"
     ids:
       - linux-cgo-arm
     build_flag_templates:
@@ -379,8 +400,7 @@ dockers:
 
 docker_manifests:
   # You can have multiple Docker manifests.
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: tag
 
     # Name template for the manifest.
@@ -395,8 +415,7 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: major
 
     # Name template for the manifest.
@@ -411,8 +430,7 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: minor
 
     # Name template for the manifest.
@@ -427,8 +445,7 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: patch
 
     # Name template for the manifest.
@@ -443,8 +460,7 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
 
-  -
-    # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: latest
 
     # Name template for the manifest.
