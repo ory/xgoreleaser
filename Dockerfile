@@ -147,9 +147,9 @@ ENV PATH=/aarch64-linux-musl-cross/bin:/arm-linux-musleabihf-cross/bin:$PATH
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
 VOLUME /project
 WORKDIR /project
+RUN git config --global --add safe.directory /project
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["-v"]
