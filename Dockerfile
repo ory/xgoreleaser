@@ -113,18 +113,18 @@ RUN apt-get update -y \
   && rm -rf /var/lib/apt/lists/*
 
 ARG GORELEASER_VERSION=1.14.1
+ARG TARGETARCH
+RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_${TARGETARCH}.tar.gz \
+    && mkdir -p goreleaser_Linux_${TARGETARCH} \
+    && tar -xvf goreleaser_Linux_${TARGETARCH}.tar.gz -C goreleaser_Linux_${TARGETARCH} \
+    && mv goreleaser_Linux_${TARGETARCH}/goreleaser /usr/local/bin/goreleaser-oss \
+    && rm -rf goreleaser_Linux_${TARGETARCH}.* goreleaser_Linux_${TARGETARCH}
 
-RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_x86_64.tar.gz \
-    && mkdir -p goreleaser_Linux_x86_64 \
-    && tar -xvf goreleaser_Linux_x86_64.tar.gz -C goreleaser_Linux_x86_64 \
-    && mv goreleaser_Linux_x86_64/goreleaser /usr/local/bin/goreleaser-oss \
-    && rm -rf goreleaser_Linux_x86_64.* goreleaser_Linux_x86_64/
-
-RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}-pro/goreleaser-pro_Linux_x86_64.tar.gz" \
-    && mkdir -p goreleaser-pro_Linux_x86_64 \
-    && tar -xvf goreleaser-pro_Linux_x86_64.tar.gz -C goreleaser-pro_Linux_x86_64 \
-    && mv goreleaser-pro_Linux_x86_64/goreleaser /usr/local/bin/goreleaser \
-    && rm -rf goreleaser-pro_Linux_x86_64.* goreleaser-pro_Linux_x86_64/
+RUN curl -LO "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}-pro/goreleaser-pro_Linux_${TARGETARCH}.tar.gz" \
+    && mkdir -p goreleaser-pro_Linux_${TARGETARCH} \
+    && tar -xvf goreleaser-pro_Linux_${TARGETARCH}.tar.gz -C goreleaser-pro_Linux_${TARGETARCH} \
+    && mv goreleaser-pro_Linux_${TARGETARCH}/goreleaser /usr/local/bin/goreleaser \
+    && rm -rf goreleaser-pro_Linux_${TARGETARCH}.* goreleaser-pro_Linux_${TARGETARCH}
 
 RUN goreleaser --version && goreleaser-oss --version
 

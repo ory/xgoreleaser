@@ -12,4 +12,4 @@ jobs:
       - run: |
           docker rm -f build || true
           docker build -f ./test/.docker/Dockerfile-goreleaser -t build .
-          docker run -v /var/run/docker.sock:/var/run/docker.sock --cpus 2 --name build build
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --name build build
