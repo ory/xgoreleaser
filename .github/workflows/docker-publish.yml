@@ -1,6 +1,6 @@
 name: Docker
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       golang:
@@ -19,8 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      -
-        name: Login to DockerHub
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: arekkas
@@ -28,13 +33,12 @@ jobs:
 
       - name: Build and push image
         run: |
-          export DOCKER_CLI_EXPERIMENTAL=enabled
-          docker buildx create --use
           go_version="${{ github.event.inputs.golang }}"
           goreleaser_version="${{ github.event.inputs.goreleaser }}"
-          docker buildx build --push \
+          docker buildx build \
             --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} \
-            --platform linux/amd64 \
+            --platform linux/amd64,linux/arm64 \
             -t oryd/xgoreleaser:${go_version}-${goreleaser_version} \
             -t oryd/xgoreleaser:latest \
             .
+          docker manifest inspect ‐‐verbose oryd/xgoreleaser:latest
