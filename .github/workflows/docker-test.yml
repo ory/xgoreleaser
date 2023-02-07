@@ -8,7 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker build -t oryd/xgoreleaser:test-build .
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - run: docker buildx build --platform=linux/amd64 -t oryd/xgoreleaser:test-build .
+
       - run: |
           docker rm -f build || true
           docker build -f ./test/.docker/Dockerfile-goreleaser -t build .

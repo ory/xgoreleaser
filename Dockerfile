@@ -114,17 +114,21 @@ RUN apt-get update -y \
 
 ARG GORELEASER_VERSION=1.14.1
 ARG TARGETARCH
-RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_${TARGETARCH}.tar.gz \
-    && mkdir -p goreleaser_Linux_${TARGETARCH} \
-    && tar -xvf goreleaser_Linux_${TARGETARCH}.tar.gz -C goreleaser_Linux_${TARGETARCH} \
-    && mv goreleaser_Linux_${TARGETARCH}/goreleaser /usr/local/bin/goreleaser-oss \
-    && rm -rf goreleaser_Linux_${TARGETARCH}.* goreleaser_Linux_${TARGETARCH}
-
-RUN curl -LO "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}-pro/goreleaser-pro_Linux_${TARGETARCH}.tar.gz" \
-    && mkdir -p goreleaser-pro_Linux_${TARGETARCH} \
-    && tar -xvf goreleaser-pro_Linux_${TARGETARCH}.tar.gz -C goreleaser-pro_Linux_${TARGETARCH} \
-    && mv goreleaser-pro_Linux_${TARGETARCH}/goreleaser /usr/local/bin/goreleaser \
-    && rm -rf goreleaser-pro_Linux_${TARGETARCH}.* goreleaser-pro_Linux_${TARGETARCH}
+RUN case "${TARGETARCH}" in \
+        amd64) ARCH="x86_64" ;; \
+        arm64) ARCH="arm64" ;; \
+        *) echo "unsupported architecture"; exit 1 ;; \
+    esac \
+    && curl -fsSLO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_${ARCH}.tar.gz \
+    && mkdir -p goreleaser_Linux_${ARCH} \
+    && tar -xvf goreleaser_Linux_${ARCH}.tar.gz -C goreleaser_Linux_${ARCH} \
+    && mv goreleaser_Linux_${ARCH}/goreleaser /usr/local/bin/goreleaser-oss \
+    && rm -rf goreleaser_Linux_${ARCH}.* goreleaser_Linux_${ARCH} \
+    && curl -fsSLO "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}-pro/goreleaser-pro_Linux_${ARCH}.tar.gz" \
+    && mkdir -p goreleaser-pro_Linux_${ARCH} \
+    && tar -xvf goreleaser-pro_Linux_${ARCH}.tar.gz -C goreleaser-pro_Linux_${ARCH} \
+    && mv goreleaser-pro_Linux_${ARCH}/goreleaser /usr/local/bin/goreleaser \
+    && rm -rf goreleaser-pro_Linux_${ARCH}.* goreleaser-pro_Linux_${ARCH}
 
 RUN goreleaser --version && goreleaser-oss --version
 
