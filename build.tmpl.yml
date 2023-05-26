@@ -365,15 +365,13 @@ dockers:
       - alpine-cgo-amd64
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-      - "--label=org.opencontainers.image.description=Scalable, security first OAuth 2.0 and OpenID Connect server"
-
       - "--label=org.opencontainers.image.vendor=Ory"
       - "--label=org.opencontainers.image.version={{ .Version }}"
       - "--label=org.opencontainers.image.created={{ .Date }}"
-      - "--label=org.opencontainers.image.source=https://github.com/ory/hydra"
+      - "--label=org.opencontainers.image.source={{ .GitURL }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-      - "--label=org.opencontainers.image.url=https://www.ory.sh/hydra"
-      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs/hydra"
+      - "--label=org.opencontainers.image.url=https://www.ory.sh"
+      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs"
       - "--platform=linux/amd64"
 
   - image_templates:
@@ -385,15 +383,13 @@ dockers:
       - alpine-cgo-arm64
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-      - "--label=org.opencontainers.image.description=Scalable, security first OAuth 2.0 and OpenID Connect server"
-
       - "--label=org.opencontainers.image.vendor=Ory"
       - "--label=org.opencontainers.image.version={{ .Version }}"
       - "--label=org.opencontainers.image.created={{ .Date }}"
-      - "--label=org.opencontainers.image.source=https://github.com/ory/hydra"
+      - "--label=org.opencontainers.image.source={{ .GitURL }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-      - "--label=org.opencontainers.image.url=https://www.ory.sh/hydra"
-      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs/hydra"
+      - "--label=org.opencontainers.image.url=https://www.ory.sh"
+      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs"
       - "--platform=linux/arm64/v8"
 
   - image_templates:
@@ -406,15 +402,13 @@ dockers:
       - alpine-cgo-arm
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-      - "--label=org.opencontainers.image.description=Scalable, security first OAuth 2.0 and OpenID Connect server"
-
       - "--label=org.opencontainers.image.vendor=Ory"
       - "--label=org.opencontainers.image.version={{ .Version }}"
       - "--label=org.opencontainers.image.created={{ .Date }}"
-      - "--label=org.opencontainers.image.source=https://github.com/ory/hydra"
+      - "--label=org.opencontainers.image.source={{ .GitURL }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-      - "--label=org.opencontainers.image.url=https://www.ory.sh/hydra"
-      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs/hydra"
+      - "--label=org.opencontainers.image.url=https://www.ory.sh"
+      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs"
       - "--platform=linux/arm/v7"
 
   - image_templates:
@@ -427,15 +421,13 @@ dockers:
       - linux-cgo-arm
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-      - "--label=org.opencontainers.image.description=Scalable, security first OAuth 2.0 and OpenID Connect server"
-
       - "--label=org.opencontainers.image.vendor=Ory"
       - "--label=org.opencontainers.image.version={{ .Version }}"
       - "--label=org.opencontainers.image.created={{ .Date }}"
-      - "--label=org.opencontainers.image.source=https://github.com/ory/hydra"
+      - "--label=org.opencontainers.image.source={{ .GitURL }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-      - "--label=org.opencontainers.image.url=https://www.ory.sh/hydra"
-      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs/hydra"
+      - "--label=org.opencontainers.image.url=https://www.ory.sh"
+      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs"
       - "--platform=linux/arm/v6"
 
 docker_manifests:
