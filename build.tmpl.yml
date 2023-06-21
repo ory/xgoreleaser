@@ -4,7 +4,8 @@ variables:
   buildinfo_hash: ""
   buildinfo_tag: ""
   buildinfo_date: ""
-  dockerfile: ".docker/Dockerfile-alpine"
+  dockerfile_alpine: ".docker/Dockerfile-alpine"
+  dockerfile_static: ".docker/Dockerfile-distroless-static"
   pub_key: "https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub"
 
 env:
@@ -135,6 +136,25 @@ builds:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+
+  - id: static-nosqlite
+    flags:
+      - "-tags=json1"
+    ldflags:
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
+    binary: "{{ .ProjectName }}"
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+      - arm64
+    goos:
+      - linux
+      - darwin
+    hooks:
+      post:
+        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
 
   - id: alpine-cgo-arm64
     flags:
@@ -275,6 +295,20 @@ archives:
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
 
+  - id: static-nosqlite
+    builds:
+      - static-nosqlite
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_static-nosqlite_
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
   - id: alpine-cgo
     builds:
       - alpine-cgo-amd64
@@ -357,9 +391,29 @@ release:
 
 dockers:
   - image_templates:
+      - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64-static"
+    use: buildx
+    dockerfile: "{{ .Var.dockerfile_static }}"
+    goarch: amd64
+    ids:
+      - static-nosqlite
+    build_flag_templates:
+      - "--platform=linux/amd64"
+
+  - image_templates:
+      - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64-static"
+    use: buildx
+    dockerfile: "{{ .Var.dockerfile_static }}"
+    goarch: arm64
+    ids:
+      - static-nosqlite
+    build_flag_templates:
+      - "--platform=linux/arm64"
+
+  - image_templates:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64"
     use: buildx
-    dockerfile: "{{ .Var.dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile_alpine }}"
     goarch: amd64
     ids:
       - alpine-cgo-amd64
@@ -370,7 +424,7 @@ dockers:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64"
     use: buildx
     goarch: arm64
-    dockerfile: "{{ .Var.dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
       - alpine-cgo-arm64
     build_flag_templates:
@@ -381,7 +435,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 7
-    dockerfile: "{{ .Var.dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
       - alpine-cgo-arm
     build_flag_templates:
@@ -392,7 +446,7 @@ dockers:
     use: buildx
     goarch: arm
     goarm: 6
-    dockerfile: "{{ .Var.dockerfile }}"
+    dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
       - linux-cgo-arm
     build_flag_templates:
