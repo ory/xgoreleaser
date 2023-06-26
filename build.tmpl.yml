@@ -418,6 +418,14 @@ dockers:
     ids:
       - alpine-cgo-amd64
     build_flag_templates:
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.vendor=Ory"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.source={{ .GitURL }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.url=https://www.ory.sh"
+      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs"
       - "--platform=linux/amd64"
 
   - image_templates:
@@ -428,6 +436,14 @@ dockers:
     ids:
       - alpine-cgo-arm64
     build_flag_templates:
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.vendor=Ory"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.source={{ .GitURL }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.url=https://www.ory.sh"
+      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs"
       - "--platform=linux/arm64/v8"
 
   - image_templates:
@@ -439,6 +455,14 @@ dockers:
     ids:
       - alpine-cgo-arm
     build_flag_templates:
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.vendor=Ory"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.source={{ .GitURL }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.url=https://www.ory.sh"
+      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs"
       - "--platform=linux/arm/v7"
 
   - image_templates:
@@ -450,6 +474,14 @@ dockers:
     ids:
       - linux-cgo-arm
     build_flag_templates:
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.vendor=Ory"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.source={{ .GitURL }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.url=https://www.ory.sh"
+      - "--label=org.opencontainers.image.documentation=https://www.ory.sh/docs"
       - "--platform=linux/arm/v6"
 
 docker_manifests:
