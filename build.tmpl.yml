@@ -391,7 +391,7 @@ release:
 
 dockers:
   - image_templates:
-      - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64-static"
+      - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64-distroless"
     use: buildx
     dockerfile: "{{ .Var.dockerfile_static }}"
     goarch: amd64
@@ -401,7 +401,7 @@ dockers:
       - "--platform=linux/amd64"
 
   - image_templates:
-      - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64-static"
+      - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64-distroless"
     use: buildx
     dockerfile: "{{ .Var.dockerfile_static }}"
     goarch: arm64
@@ -513,6 +513,19 @@ docker_manifests:
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv7"
       - "oryd/{{ .ProjectName }}:{{ .Tag }}-armv6"
+
+  - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
+    id: distroless
+
+    # Name template for the manifest.
+    # Defaults to empty.
+    name_template: "oryd/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}.{{ .Patch }}-distroless"
+
+    # Image name templates to be added to this manifest.
+    # Defaults to empty.
+    image_templates:
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-amd64-distroless"
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64-distroless"
 
   - # ID of the manifest, needed if you want to filter by it later on (e.g. on custom publishers).
     id: latest
