@@ -371,8 +371,8 @@ brews:
 
 scoops:
   - ids: [ windows-cgo ]
-    name: {{ .ProjectName }}
-    bucket:
+    name: "{{ .ProjectName }}"
+    repository:
       owner: ory
       name: scoop
     homepage: https://www.ory.sh
