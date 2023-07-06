@@ -372,7 +372,7 @@ brews:
 scoops:
   - ids: [ windows-cgo ]
     name: {{ .ProjectName }}
-    repository:
+    bucket:
       owner: ory
       name: scoop
     homepage: https://www.ory.sh
