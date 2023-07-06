@@ -369,15 +369,17 @@ brews:
       name: aeneasr
       email: 3372410+aeneasr@users.noreply.github.com
 
-scoop:
-  bucket:
-    owner: ory
-    name: scoop
-  homepage: https://www.ory.sh
-  commit_author:
-    name: aeneasr
-    email: 3372410+aeneasr@users.noreply.github.com
-  commit_msg_template: "autogen: scoop update for {{ .ProjectName }} version {{ .Tag }}"
+scoops:
+  - ids: [ windows-cgo ]
+    name: {{ .ProjectName }}
+    repository:
+      owner: ory
+      name: scoop
+    homepage: https://www.ory.sh
+    commit_author:
+      name: aeneasr
+      email: 3372410+aeneasr@users.noreply.github.com
+    commit_msg_template: "autogen: scoop update for {{ .ProjectName }} version {{ .Tag }}"
 
 release:
   prerelease: auto
