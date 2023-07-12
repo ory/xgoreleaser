@@ -355,7 +355,7 @@ brews:
   - name: "{{ .Var.brew_name }}"
     description: "{{ .Var.brew_description }}"
     license: "Apache-2.0"
-    tap:
+    repository:
       owner: ory
       name: homebrew-tap
     goarm: 6
