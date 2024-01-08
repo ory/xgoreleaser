@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.19
+ARG GO_VERSION=1.21
 
 # OS-X SDK parameters
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
@@ -14,7 +14,7 @@ ARG OSX_SDK=MacOSX11.3.sdk
 # OSX-cross parameters. Go 1.15 requires OSX >= 10.11
 ARG OSX_VERSION_MIN=11.3
 # Choose latest commit from here: https://github.com/tpoechtrager/osxcross/commits/master/CHANGELOG
-ARG OSX_CROSS_COMMIT=3351f5573c5c3f38a28a82df1ae09cad6d70f83d
+ARG OSX_CROSS_COMMIT=c0cb74c8c01a66be0b6d05788f05201d87d9df9f
 
 # Libtool parameters
 ARG LIBTOOL_VERSION=2.4.6_4
@@ -26,7 +26,7 @@ ARG LIBTOOL_VERSION=2.4.6_4
 ARG LIBTOOL_SHA=dfb94265706b7204b346e3e5d48e149d7c7870063740f0c4ab2d6ec971260517
 ARG OSX_CODENAME=big_sur
 
-FROM golang:${GO_VERSION}-buster AS base
+FROM golang:${GO_VERSION}-bullseye AS base
 ARG APT_MIRROR
 RUN sed -ri "s/(httpredir|deb).debian.org/${APT_MIRROR:-deb.debian.org}/g" /etc/apt/sources.list \
  && sed -ri "s/(security).debian.org/${APT_MIRROR:-security.debian.org}/g" /etc/apt/sources.list
@@ -43,15 +43,16 @@ FROM base AS osx-cross-base
 ARG DEBIAN_FRONTEND=noninteractive
 # Dependencies for https://github.com/tpoechtrager/osxcross:
 # TODO split these into "build-time" and "runtime" dependencies so that build-time deps do not end up in the final image
-RUN apt-get update -qq && apt-get install -y -q --no-install-recommends \
+RUN apt-get update -qq
+RUN apt-get install -y -q --no-install-recommends \
     clang \
     file \
     llvm \
     patch \
     xz-utils \
     cmake make libssl-dev lzma-dev libxml2-dev \
-    gcc g++ zlib1g-dev libmpc-dev libmpfr-dev libgmp-dev \
- && rm -rf /var/lib/apt/lists/*
+    gcc g++ zlib1g-dev libmpc-dev libmpfr-dev libgmp-dev
+RUN rm -rf /var/lib/apt/lists/*
 
 FROM osx-cross-base AS osx-cross
 ARG OSX_CROSS_COMMIT
@@ -81,10 +82,10 @@ FROM osx-cross-base AS final
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
-RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -s
-RUN apt-get update -y \
-  && apt-get upgrade -y \
-  && apt-get install -y --no-install-recommends \
+RUN curl -sL https://deb.nodesource.com/setup_21.x | bash -s
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y --no-install-recommends \
     libltdl-dev \
     gcc-mingw-w64 \
     parallel \
@@ -98,21 +99,21 @@ RUN apt-get update -y \
     nodejs \
     build-essential \
     docker-ce docker-ce-cli containerd.io \
-    gcc cpp gcc-8 binutils \
-  && apt-get update -y \
-  && apt-get install -y \
+    gcc cpp gcc-9 binutils
+RUN apt-get update -y
+RUN apt-get install -y \
     gcc-aarch64-linux-gnu \
-    gcc-arm-linux-gnueabihf \
-  && rm -rf /var/lib/apt/lists/*
+    gcc-arm-linux-gnueabihf
+RUN rm -rf /var/lib/apt/lists/*
 
 # Install libusl with arm support which is only available on "bookworm"
 RUN echo "deb http://ftp.us.debian.org/debian bookworm main" >> /etc/apt/sources.list
-RUN apt-get update -y \
-  && apt-get install -y \
-  musl-tools \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y
+RUN apt-get install -y \
+  musl-tools
+RUN rm -rf /var/lib/apt/lists/*
 
-ARG GORELEASER_VERSION=1.14.1
+ARG GORELEASER_VERSION=1.23.0
 
 RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_x86_64.tar.gz \
     && mkdir -p goreleaser_Linux_x86_64 \
