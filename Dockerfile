@@ -82,10 +82,10 @@ FROM osx-cross-base AS final
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
-RUN curl -sL https://deb.nodesource.com/setup_17.x | bash -s
-RUN apt-get update -y \
-  && apt-get upgrade -y \
-  && apt-get install -y --no-install-recommends \
+RUN curl -sL https://deb.nodesource.com/setup_21.x | bash -s
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN apt-get install -y --no-install-recommends \
     libltdl-dev \
     gcc-mingw-w64 \
     parallel \
@@ -99,7 +99,7 @@ RUN apt-get update -y \
     nodejs \
     build-essential \
     docker-ce docker-ce-cli containerd.io \
-    gcc cpp gcc-8 binutils
+    gcc cpp gcc-9 binutils
 RUN apt-get update -y
 RUN apt-get install -y \
     gcc-aarch64-linux-gnu \
