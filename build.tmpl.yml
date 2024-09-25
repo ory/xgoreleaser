@@ -1,3 +1,5 @@
+version: 2
+
 variables:
   brew_name: ""
   brew_description: ""

@@ -4,7 +4,7 @@ ARG GO_VERSION=1.22
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
 ARG OSX_SDK=MacOSX11.3.sdk
 
-# To get the SHA sum do:
+# To get the SHA sum do:8056533314010954413
 # wget https://s3.dockerproject.org/darwin/v2/${OSX_SDK}.tar.xz
 #
 # We no longer use this.
@@ -113,7 +113,7 @@ RUN apt-get install -y \
   musl-tools
 RUN rm -rf /var/lib/apt/lists/*
 
-ARG GORELEASER_VERSION=1.23.0
+ARG GORELEASER_VERSION=2.3.2
 
 RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_x86_64.tar.gz \
     && mkdir -p goreleaser_Linux_x86_64 \
