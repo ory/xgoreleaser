@@ -399,6 +399,7 @@ dockers:
     use: buildx
     dockerfile: "{{ .Var.dockerfile_static }}"
     goarch: amd64
+    skip_push: true
     ids:
       - static-nosqlite
     build_flag_templates:
@@ -409,6 +410,7 @@ dockers:
     use: buildx
     dockerfile: "{{ .Var.dockerfile_static }}"
     goarch: arm64
+    skip_push: true
     ids:
       - static-nosqlite
     build_flag_templates:
@@ -419,6 +421,7 @@ dockers:
     use: buildx
     dockerfile: "{{ .Var.dockerfile_alpine }}"
     goarch: amd64
+    skip_push: true
     ids:
       - alpine-cgo-amd64
     build_flag_templates:
@@ -436,6 +439,7 @@ dockers:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64"
     use: buildx
     goarch: arm64
+    skip_push: true
     dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
       - alpine-cgo-arm64
@@ -454,6 +458,7 @@ dockers:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-armv7"
     use: buildx
     goarch: arm
+    skip_push: true
     goarm: 7
     dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
@@ -473,6 +478,7 @@ dockers:
       - "oryd/{{ .ProjectName }}:v{{ .Version }}-armv6"
     use: buildx
     goarch: arm
+    skip_push: true
     goarm: 6
     dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
