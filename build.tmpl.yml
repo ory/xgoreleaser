@@ -40,7 +40,7 @@ signs:
     artifacts: checksum
 
 docker_signs:
-  - artifacts: all
+  - artifacts: manifests
     args: ["sign", "--key=/tmp/cosign.key", "${artifact}"]
     stdin: "{{ .Env.COSIGN_PWD }}"
 
