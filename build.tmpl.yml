@@ -249,7 +249,7 @@ archives:
       - windows-cgo
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
@@ -266,7 +266,7 @@ archives:
       - macos-cgo
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
@@ -285,7 +285,7 @@ archives:
       - linux-cgo-arm
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
@@ -318,7 +318,7 @@ archives:
       - alpine-cgo-arm
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
@@ -335,7 +335,7 @@ archives:
       - default
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
     name_template: >-
       {{- .ProjectName }}_
       {{- .Version }}-
