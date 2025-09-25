@@ -238,6 +238,9 @@ builds:
       - darwin
       # Disabled because build will time out, it works though:
       # - freebsd
+    ignore:
+      - goos: windows
+        goarch: arm
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
