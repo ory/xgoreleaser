@@ -26,7 +26,7 @@ ARG LIBTOOL_VERSION=2.4.6_4
 ARG LIBTOOL_SHA=dfb94265706b7204b346e3e5d48e149d7c7870063740f0c4ab2d6ec971260517
 ARG OSX_CODENAME=big_sur
 
-FROM golang:${GO_VERSION}-bullseye AS base
+FROM golang:${GO_VERSION}-bookworm AS base
 ARG APT_MIRROR
 RUN sed -ri "s/(httpredir|deb).debian.org/${APT_MIRROR:-deb.debian.org}/g" /etc/apt/sources.list \
  && sed -ri "s/(security).debian.org/${APT_MIRROR:-security.debian.org}/g" /etc/apt/sources.list
@@ -99,18 +99,12 @@ RUN apt-get install -y --no-install-recommends \
     nodejs \
     build-essential \
     docker-ce docker-ce-cli containerd.io \
-    gcc cpp gcc-9 binutils
+    gcc cpp gcc-9 binutils \
+    musl-tools \
 RUN apt-get update -y
 RUN apt-get install -y \
     gcc-aarch64-linux-gnu \
     gcc-arm-linux-gnueabihf
-RUN rm -rf /var/lib/apt/lists/*
-
-# Install libusl with arm support which is only available on "bookworm"
-RUN echo "deb http://ftp.us.debian.org/debian bookworm main" >> /etc/apt/sources.list
-RUN apt-get update -y
-RUN apt-get install -y \
-  musl-tools
 RUN rm -rf /var/lib/apt/lists/*
 
 ARG GORELEASER_VERSION=2.3.2
