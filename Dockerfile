@@ -27,9 +27,6 @@ ARG LIBTOOL_SHA=dfb94265706b7204b346e3e5d48e149d7c7870063740f0c4ab2d6ec971260517
 ARG OSX_CODENAME=big_sur
 
 FROM golang:${GO_VERSION}-bookworm AS base
-ARG APT_MIRROR
-RUN sed -ri "s/(httpredir|deb).debian.org/${APT_MIRROR:-deb.debian.org}/g" /etc/apt/sources.list \
- && sed -ri "s/(security).debian.org/${APT_MIRROR:-security.debian.org}/g" /etc/apt/sources.list
 ENV OSX_CROSS_PATH=/osxcross
 
 FROM base AS osx-sdk
