@@ -96,8 +96,8 @@ RUN apt-get install -y --no-install-recommends \
     nodejs \
     build-essential \
     docker-ce docker-ce-cli containerd.io \
-    gcc cpp gcc-9 binutils \
-    musl-tools \
+    gcc cpp binutils \
+    musl-tools
 RUN apt-get update -y
 RUN apt-get install -y \
     gcc-aarch64-linux-gnu \
@@ -112,7 +112,7 @@ RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GOREL
     && mv goreleaser_Linux_x86_64/goreleaser /usr/local/bin/goreleaser-oss \
     && rm -rf goreleaser_Linux_x86_64.* goreleaser_Linux_x86_64/
 
-RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}-pro/goreleaser-pro_Linux_x86_64.tar.gz" \
+RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}/goreleaser-pro_Linux_x86_64.tar.gz" \
     && mkdir -p goreleaser-pro_Linux_x86_64 \
     && tar -xvf goreleaser-pro_Linux_x86_64.tar.gz -C goreleaser-pro_Linux_x86_64 \
     && mv goreleaser-pro_Linux_x86_64/goreleaser /usr/local/bin/goreleaser \
