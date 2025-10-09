@@ -1,4 +1,5 @@
 name: Docker
+run-name: Docker - golang ${{ inputs.golang }} - goreleaser ${{ inputs.goreleaser }}
 
 on: 
   workflow_dispatch:

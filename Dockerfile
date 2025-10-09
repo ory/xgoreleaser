@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.22
+ARG GO_VERSION=1.25.2
 
 # OS-X SDK parameters
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
@@ -26,10 +26,7 @@ ARG LIBTOOL_VERSION=2.4.6_4
 ARG LIBTOOL_SHA=dfb94265706b7204b346e3e5d48e149d7c7870063740f0c4ab2d6ec971260517
 ARG OSX_CODENAME=big_sur
 
-FROM golang:${GO_VERSION}-bullseye AS base
-ARG APT_MIRROR
-RUN sed -ri "s/(httpredir|deb).debian.org/${APT_MIRROR:-deb.debian.org}/g" /etc/apt/sources.list \
- && sed -ri "s/(security).debian.org/${APT_MIRROR:-security.debian.org}/g" /etc/apt/sources.list
+FROM golang:${GO_VERSION}-bookworm AS base
 ENV OSX_CROSS_PATH=/osxcross
 
 FROM base AS osx-sdk
@@ -99,21 +96,15 @@ RUN apt-get install -y --no-install-recommends \
     nodejs \
     build-essential \
     docker-ce docker-ce-cli containerd.io \
-    gcc cpp gcc-9 binutils
+    gcc cpp binutils \
+    musl-tools
 RUN apt-get update -y
 RUN apt-get install -y \
     gcc-aarch64-linux-gnu \
     gcc-arm-linux-gnueabihf
 RUN rm -rf /var/lib/apt/lists/*
 
-# Install libusl with arm support which is only available on "bookworm"
-RUN echo "deb http://ftp.us.debian.org/debian bookworm main" >> /etc/apt/sources.list
-RUN apt-get update -y
-RUN apt-get install -y \
-  musl-tools
-RUN rm -rf /var/lib/apt/lists/*
-
-ARG GORELEASER_VERSION=2.3.2
+ARG GORELEASER_VERSION=2.12.5
 
 RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_x86_64.tar.gz \
     && mkdir -p goreleaser_Linux_x86_64 \
@@ -121,7 +112,7 @@ RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GOREL
     && mv goreleaser_Linux_x86_64/goreleaser /usr/local/bin/goreleaser-oss \
     && rm -rf goreleaser_Linux_x86_64.* goreleaser_Linux_x86_64/
 
-RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}-pro/goreleaser-pro_Linux_x86_64.tar.gz" \
+RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}/goreleaser-pro_Linux_x86_64.tar.gz" \
     && mkdir -p goreleaser-pro_Linux_x86_64 \
     && tar -xvf goreleaser-pro_Linux_x86_64.tar.gz -C goreleaser-pro_Linux_x86_64 \
     && mv goreleaser-pro_Linux_x86_64/goreleaser /usr/local/bin/goreleaser \
@@ -136,11 +127,18 @@ COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
-RUN curl -O https://musl.cc/aarch64-linux-musl-cross.tgz \
+ENV AARCH64SUM=8695ff86979cdf30fbbcd33061711f5b1ebc3c48a87822b9ca56cde6d3a22abd4dab30fdcd1789ac27c6febbaeb9e5bde59d79d66552fae53d54cc1377a19272
+ENV ARMSUM=fe006d9176cedb453fd817f892f61f6bac273c15879f9c537e22c75b8da4995991211f6d23b0c0c97a87121fe55cf9f9f29cc3d1cf9376804535f07b6c017729
+
+RUN curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/aarch64-linux-musl-cross.tgz \
+    && echo "$AARCH64SUM  aarch64-linux-musl-cross.tgz" > aarch64.sum \
+    && sha512sum -c aarch64.sum \
     && tar xzf aarch64-linux-musl-cross.tgz \
     && mv aarch64-linux-musl-cross /aarch64-linux-musl-cross
 
-RUN curl -O https://musl.cc/arm-linux-musleabihf-cross.tgz \
+RUN curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/arm-linux-musleabihf-cross.tgz \
+    && echo "$ARMSUM  arm-linux-musleabihf-cross.tgz" > arm.sum \
+    && sha512sum -c arm.sum \
     && tar xzf arm-linux-musleabihf-cross.tgz \
     && mv arm-linux-musleabihf-cross /arm-linux-musleabihf-cross
 
