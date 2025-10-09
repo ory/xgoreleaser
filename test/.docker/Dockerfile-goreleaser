@@ -11,11 +11,11 @@ ENV DOCKER_SHORT_TAG=v0.0.0-alpha.1
 ADD . /home/ory/
 
 ENTRYPOINT ["goreleaser"]
-CMD ["--snapshot", "--skip-publish", "--skip-sign", "--rm-dist"]
+CMD ["--snapshot", "--skip=publish,sign", "--clean"]
 
 # Manual for debugging:
 #   docker rm -f build || true; docker build -f .docker/Dockerfile-goreleaser -t build .; docker run build
 #
 # or:
 #   docker rm -f build || true; docker build -f .docker/Dockerfile-goreleaser -t build .; docker run --cpus 6 --name build --entrypoint /bin/bash -it build
-#   goreleaser --snapshot --skip-publish --rm-dist
+#   goreleaser --snapshot --skip=publish,sign --clean
