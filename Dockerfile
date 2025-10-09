@@ -127,13 +127,11 @@ COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
-RUN curl -fL --retry 5 --retry-all-errors --retry-delay 5 \
-         --connect-timeout 10 --max-time 300 \
-         -O https://musl.cc/aarch64-linux-musl-cross.tgz \
+RUN curl -O https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/aarch64-linux-musl-cross.tgz \
     && tar xzf aarch64-linux-musl-cross.tgz \
     && mv aarch64-linux-musl-cross /aarch64-linux-musl-cross
 
-RUN curl -O https://musl.cc/arm-linux-musleabihf-cross.tgz \
+RUN curl -O https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/arm-linux-musleabihf-cross.tgz \
     && tar xzf arm-linux-musleabihf-cross.tgz \
     && mv arm-linux-musleabihf-cross /arm-linux-musleabihf-cross
 
