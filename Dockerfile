@@ -1,4 +1,4 @@
-ARG GO_VERSION=1.22
+ARG GO_VERSION=1.25.2
 
 # OS-X SDK parameters
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
@@ -104,7 +104,7 @@ RUN apt-get install -y \
     gcc-arm-linux-gnueabihf
 RUN rm -rf /var/lib/apt/lists/*
 
-ARG GORELEASER_VERSION=2.3.2
+ARG GORELEASER_VERSION=2.12.5
 
 RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_x86_64.tar.gz \
     && mkdir -p goreleaser_Linux_x86_64 \
