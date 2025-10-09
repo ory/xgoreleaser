@@ -127,7 +127,9 @@ COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
-RUN curl -O https://musl.cc/aarch64-linux-musl-cross.tgz \
+RUN curl -fL --retry 5 --retry-all-errors --retry-delay 5 \
+         --connect-timeout 10 --max-time 300 \
+         -O https://musl.cc/aarch64-linux-musl-cross.tgz \
     && tar xzf aarch64-linux-musl-cross.tgz \
     && mv aarch64-linux-musl-cross /aarch64-linux-musl-cross
 
