@@ -127,16 +127,18 @@ COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
-#    && sha512 -c 8695ff86979cdf30fbbcd33061711f5b1ebc3c48a87822b9ca56cde6d3a22abd4dab30fdcd1789ac27c6febbaeb9e5bde59d79d66552fae53d54cc1377a19272 aarch64-linux-musl-cross.tgz \
-
+ENV AARCH64SUM=8695ff86979cdf30fbbcd33061711f5b1ebc3c48a87822b9ca56cde6d3a22abd4dab30fdcd1789ac27c6febbaeb9e5bde59d79d66552fae53d54cc1377a19272
+ENV ARMSUM=fe006d9176cedb453fd817f892f61f6bac273c15879f9c537e22c75b8da4995991211f6d23b0c0c97a87121fe55cf9f9f29cc3d1cf9376804535f07b6c017729
 
 RUN curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/aarch64-linux-musl-cross.tgz \
+    && echo "$AARCH64SUM  aarch64-linux-musl-cross.tgz" > aarch64.sum \
+    && sha512sum -c aarch64.sum \
     && tar xzf aarch64-linux-musl-cross.tgz \
     && mv aarch64-linux-musl-cross /aarch64-linux-musl-cross
 
-#    && sha512 -c fe006d9176cedb453fd817f892f61f6bac273c15879f9c537e22c75b8da4995991211f6d23b0c0c97a87121fe55cf9f9f29cc3d1cf9376804535f07b6c017729 arm-linux-musleabihf-cross.tgz \
-
 RUN curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/arm-linux-musleabihf-cross.tgz \
+    && echo "$ARMSUM  arm-linux-musleabihf-cross.tgz" > arm.sum \
+    && sha512sum -c arm.sum \
     && tar xzf arm-linux-musleabihf-cross.tgz \
     && mv arm-linux-musleabihf-cross /arm-linux-musleabihf-cross
 
