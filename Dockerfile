@@ -2,7 +2,7 @@ ARG GO_VERSION=1.25.2
 
 # OS-X SDK parameters
 # NOTE: when changing version here, make sure to also change OSX_CODENAME below to match
-ARG OSX_SDK=MacOSX15.5.sdk
+ARG OSX_SDK=MacOSX15.0.sdk
 
 # To get the SHA sum do:8056533314010954413
 # wget https://s3.dockerproject.org/darwin/v2/${OSX_SDK}.tar.xz
@@ -12,9 +12,9 @@ ARG OSX_SDK=MacOSX15.5.sdk
 # ARG OSX_SDK_SUM=694a66095a3514328e970b14978dc78c0f4d170e590fa7b2c3d3674b75f0b713
 
 # OSX-cross parameters. Go 1.15 requires OSX >= 10.11
-ARG OSX_VERSION_MIN=15.5
+ARG OSX_VERSION_MIN=12.7
 # Choose latest commit from here: https://github.com/tpoechtrager/osxcross/commits/master/CHANGELOG
-ARG OSX_CROSS_COMMIT=c0cb74c8c01a66be0b6d05788f05201d87d9df9f
+ARG OSX_CROSS_COMMIT=f873f534c6cdb0776e457af8c7513da1e02abe59
 
 # Libtool parameters
 ARG LIBTOOL_VERSION=2.4.6_4
@@ -26,15 +26,14 @@ ARG LIBTOOL_VERSION=2.4.6_4
 ARG LIBTOOL_SHA=dfb94265706b7204b346e3e5d48e149d7c7870063740f0c4ab2d6ec971260517
 ARG OSX_CODENAME=big_sur
 
-FROM golang:${GO_VERSION}-bookworm AS base
+FROM golang:${GO_VERSION}-trixie AS base
 ENV OSX_CROSS_PATH=/osxcross
 
 FROM base AS osx-sdk
 ARG OSX_SDK
 # ARG OSX_SDK_SUM
 # This is generated from: https://github.com/tpoechtrager/osxcross#packaging-the-sdk
-#ADD https://storage.googleapis.com/ory.sh/build-assets/${OSX_SDK}.tar.xz "${OSX_CROSS_PATH}/tarballs/${OSX_SDK}.tar.xz"
-ADD https://storage.googleapis.com/orytest-macos-sdk/${OSX_SDK}.tar.xz "${OSX_CROSS_PATH}/tarballs/${OSX_SDK}.tar.xz"
+ADD https://storage.googleapis.com/ory.sh/build-assets/${OSX_SDK}.tar.xz "${OSX_CROSS_PATH}/tarballs/${OSX_SDK}.tar.xz"
 #RUN echo "${OSX_SDK_SUM}"  "${OSX_CROSS_PATH}/tarballs/${OSX_SDK}.tar.xz" | sha256sum -c -
 
 FROM base AS osx-cross-base
@@ -48,7 +47,7 @@ RUN apt-get install -y -q --no-install-recommends \
     llvm \
     patch \
     xz-utils \
-    cmake make libssl-dev lzma-dev libxml2-dev \
+    cmake make libssl-dev libxml2-dev \
     gcc g++ zlib1g-dev libmpc-dev libmpfr-dev libgmp-dev
 RUN rm -rf /var/lib/apt/lists/*
 
@@ -91,7 +90,6 @@ RUN apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     gnupg2 \
-    software-properties-common \
     gettext \
     jq \
     nodejs \
