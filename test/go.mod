@@ -1,5 +1,5 @@
 module github.com/ory/xgoreleaser/test
 
-go 1.16
+go 1.25.2
 
-require github.com/mattn/go-sqlite3 v1.14.16
+require github.com/mattn/go-sqlite3 v1.14.32
