@@ -179,7 +179,7 @@ RUN case "${TARGETARCH}" in \
             && curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/x86_64-linux-musl-cross.tgz \
             && echo "$X86_64_MUSL_CROSS_SUM  x86_64-linux-musl-cross.tgz" > x86_64.sum \
             && sha512sum -c x86_64.sum \
-            && tar xzf x86_64-linux-musl-cross.tgz x86_64-linux-musl-cross/x86_64-linux-musl \
+            && tar xzf x86_64-linux-musl-cross.tgz \
             && mv x86_64-linux-musl-cross/x86_64-linux-musl /x86_64-linux-musl \
             && rm -rf x86_64-linux-musl-cross.tgz x86_64.sum x86_64-linux-musl-cross \
             && apt-get update -qq \
