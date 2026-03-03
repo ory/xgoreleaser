@@ -61,6 +61,16 @@ COPY --from=osx-sdk "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ARG OSX_VERSION_MIN
 RUN UNATTENDED=yes OSX_VERSION_MIN=${OSX_VERSION_MIN} ./build.sh
 
+# Get x86_64 musl sysroot for cross-compilation from arm64 build hosts.
+# The startup files (crt1.o, crti.o, crtn.o) and libc are copied into the
+# final image so that x86_64-linux-gnu-gcc can produce musl-linked amd64
+# binaries when running on an arm64 host.
+FROM --platform=linux/amd64 debian:trixie-slim AS musl-x86_64-sysroot
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends musl-tools && \
+    rm -rf /var/lib/apt/lists/*
+
 FROM base AS libtool
 ARG LIBTOOL_VERSION
 ARG LIBTOOL_SHA
@@ -137,6 +147,11 @@ COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
+# Populate /usr/lib/x86_64-linux-musl with startup files and libc.
+# On amd64 this is already present from musl-tools; on arm64 this provides
+# the cross-compilation sysroot used by the x86_64-linux-musl-gcc wrapper.
+COPY --from=musl-x86_64-sysroot /usr/lib/x86_64-linux-musl /usr/lib/x86_64-linux-musl
+
 # musl.cc toolchain checksums
 # aarch64-linux-musl-cross  (x86_64-hosted, targets aarch64) — used on amd64 build hosts
 ENV AARCH64_CROSS_SUM=8695ff86979cdf30fbbcd33061711f5b1ebc3c48a87822b9ca56cde6d3a22abd4dab30fdcd1789ac27c6febbaeb9e5bde59d79d66552fae53d54cc1377a19272
@@ -163,6 +178,7 @@ RUN case "${TARGETARCH}" in \
             && tar xzf arm-linux-musleabihf-cross.tgz \
             && mv arm-linux-musleabihf-cross /arm-linux-musleabihf-cross \
             && rm arm-linux-musleabihf-cross.tgz arm.sum \
+            && ln -sf /usr/bin/musl-gcc /usr/local/bin/x86_64-linux-musl-gcc \
             ;; \
         arm64) \
             curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/aarch64-linux-musl-native.tgz \
@@ -171,6 +187,12 @@ RUN case "${TARGETARCH}" in \
             && tar xzf aarch64-linux-musl-native.tgz \
             && mv aarch64-linux-musl-native /aarch64-linux-musl-cross \
             && rm aarch64-linux-musl-native.tgz aarch64.sum \
+            && apt-get update -qq \
+            && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu \
+            && rm -rf /var/lib/apt/lists/* \
+            && printf '#!/bin/sh\nexec x86_64-linux-gnu-gcc -B/usr/lib/x86_64-linux-musl -L/usr/lib/x86_64-linux-musl "$@"\n' \
+               > /usr/local/bin/x86_64-linux-musl-gcc \
+            && chmod +x /usr/local/bin/x86_64-linux-musl-gcc \
             ;; \
         *) echo "Unsupported TARGETARCH: ${TARGETARCH}"; exit 1 ;; \
     esac

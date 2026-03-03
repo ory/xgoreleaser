@@ -73,6 +73,7 @@ builds:
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
+      - CC=x86_64-linux-gnu-gcc
     goarch:
       - amd64
     goos:
@@ -129,7 +130,7 @@ builds:
     binary: "{{ .ProjectName }}"
     env:
       - CGO_ENABLED=1
-      - CC=musl-gcc
+      - CC=x86_64-linux-musl-gcc
     goarch:
       - amd64
     goos:
