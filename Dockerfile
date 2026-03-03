@@ -183,7 +183,7 @@ RUN case "${TARGETARCH}" in \
             && mv x86_64-linux-musl-cross/x86_64-linux-musl /x86_64-linux-musl \
             && rm -rf x86_64-linux-musl-cross.tgz x86_64.sum x86_64-linux-musl-cross \
             && apt-get update -qq \
-            && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu \
+            && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu libc6-dev-amd64-cross \
             && rm -rf /var/lib/apt/lists/* \
             && printf '#!/bin/sh\nexec x86_64-linux-gnu-gcc -B/x86_64-linux-musl/lib -L/x86_64-linux-musl/lib -isystem /x86_64-linux-musl/include "$@"\n' \
                > /usr/local/bin/x86_64-linux-musl-gcc \
