@@ -182,12 +182,21 @@ RUN case "${TARGETARCH}" in \
             && tar xzf x86_64-linux-musl-cross.tgz \
             && mv x86_64-linux-musl-cross/x86_64-linux-musl /x86_64-linux-musl \
             && rm -rf x86_64-linux-musl-cross.tgz x86_64.sum x86_64-linux-musl-cross \
+            && curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/arm-linux-musleabihf-cross.tgz \
+            && echo "$ARMSUM  arm-linux-musleabihf-cross.tgz" > arm.sum \
+            && sha512sum -c arm.sum \
+            && tar xzf arm-linux-musleabihf-cross.tgz \
+            && mv arm-linux-musleabihf-cross/arm-linux-musleabihf /arm-linux-musleabihf \
+            && rm -rf arm-linux-musleabihf-cross.tgz arm.sum arm-linux-musleabihf-cross \
             && apt-get update -qq \
             && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu libc6-dev-amd64-cross \
             && rm -rf /var/lib/apt/lists/* \
             && printf '#!/bin/sh\nexec x86_64-linux-gnu-gcc -B/x86_64-linux-musl/lib -L/x86_64-linux-musl/lib -isystem /x86_64-linux-musl/include "$@"\n' \
                > /usr/local/bin/x86_64-linux-musl-gcc \
             && chmod +x /usr/local/bin/x86_64-linux-musl-gcc \
+            && printf '#!/bin/sh\nexec arm-linux-gnueabihf-gcc -B/arm-linux-musleabihf/lib -L/arm-linux-musleabihf/lib -isystem /arm-linux-musleabihf/include "$@"\n' \
+               > /usr/local/bin/arm-linux-musleabihf-gcc \
+            && chmod +x /usr/local/bin/arm-linux-musleabihf-gcc \
             ;; \
         *) echo "Unsupported TARGETARCH: ${TARGETARCH}"; exit 1 ;; \
     esac
