@@ -61,16 +61,6 @@ COPY --from=osx-sdk "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ARG OSX_VERSION_MIN
 RUN UNATTENDED=yes OSX_VERSION_MIN=${OSX_VERSION_MIN} ./build.sh
 
-# Get x86_64 musl sysroot for cross-compilation from arm64 build hosts.
-# The startup files (crt1.o, crti.o, crtn.o) and libc are copied into the
-# final image so that x86_64-linux-gnu-gcc can produce musl-linked amd64
-# binaries when running on an arm64 host.
-FROM --platform=linux/amd64 debian:trixie-slim AS musl-x86_64-sysroot
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends musl-tools && \
-    rm -rf /var/lib/apt/lists/*
-
 FROM base AS libtool
 ARG LIBTOOL_VERSION
 ARG LIBTOOL_SHA
@@ -147,11 +137,6 @@ COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
-# Populate /usr/lib/x86_64-linux-musl with startup files and libc.
-# On amd64 this is already present from musl-tools; on arm64 this provides
-# the cross-compilation sysroot used by the x86_64-linux-musl-gcc wrapper.
-COPY --from=musl-x86_64-sysroot /usr/lib/x86_64-linux-musl /usr/lib/x86_64-linux-musl
-
 # musl.cc toolchain checksums
 # aarch64-linux-musl-cross  (x86_64-hosted, targets aarch64) — used on amd64 build hosts
 ENV AARCH64_CROSS_SUM=8695ff86979cdf30fbbcd33061711f5b1ebc3c48a87822b9ca56cde6d3a22abd4dab30fdcd1789ac27c6febbaeb9e5bde59d79d66552fae53d54cc1377a19272
@@ -159,11 +144,15 @@ ENV AARCH64_CROSS_SUM=8695ff86979cdf30fbbcd33061711f5b1ebc3c48a87822b9ca56cde6d3
 ENV AARCH64_NATIVE_SUM=16d544e09845c9dbba50f29e0cb04dd661e17eb63c56acad6a67fd2a78aa7596b792477c7177d3cd56d408a27dc291a90507df882f2b099c0f25511ce08fd3b5
 # arm-linux-musleabihf-cross (x86_64-hosted, targets armhf)  — only available for amd64 build hosts
 ENV ARMSUM=fe006d9176cedb453fd817f892f61f6bac273c15879f9c537e22c75b8da4995991211f6d23b0c0c97a87121fe55cf9f9f29cc3d1cf9376804535f07b6c017729
+# x86_64-linux-musl-cross (x86_64-hosted, targets x86_64 musl) — sysroot extracted for arm64 build hosts
+ENV X86_64_MUSL_CROSS_SUM=52abd1a56e670952116e35d1a62e048a9b6160471d988e16fa0e1611923dd108a581d2e00874af5eb04e4968b1ba32e0eb449a1f15c3e4d5240ebe09caf5a9f3
 
 # Install musl cross-compilation toolchains.
 # On amd64: aarch64-linux-musl-cross (cross) + arm-linux-musleabihf-cross (cross)
-# On arm64: aarch64-linux-musl-native (native, same-arch) — no musl.cc arm32 toolchain
-#           exists for arm64 hosts; arm-linux-gnueabihf-gcc from apt serves as fallback.
+#           x86_64-linux-musl-gcc -> musl-gcc symlink (musl-tools already provides the sysroot)
+# On arm64: aarch64-linux-musl-native (native, same-arch)
+#           x86_64-linux-musl-cross sysroot extracted (crt files + libc; these are x86_64 target
+#           files, not host executables, so no QEMU needed) + gcc-x86-64-linux-gnu as compiler
 RUN case "${TARGETARCH}" in \
         amd64) \
             curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/aarch64-linux-musl-cross.tgz \
@@ -187,10 +176,16 @@ RUN case "${TARGETARCH}" in \
             && tar xzf aarch64-linux-musl-native.tgz \
             && mv aarch64-linux-musl-native /aarch64-linux-musl-cross \
             && rm aarch64-linux-musl-native.tgz aarch64.sum \
+            && curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/x86_64-linux-musl-cross.tgz \
+            && echo "$X86_64_MUSL_CROSS_SUM  x86_64-linux-musl-cross.tgz" > x86_64.sum \
+            && sha512sum -c x86_64.sum \
+            && tar xzf x86_64-linux-musl-cross.tgz x86_64-linux-musl-cross/x86_64-linux-musl \
+            && mv x86_64-linux-musl-cross/x86_64-linux-musl /x86_64-linux-musl \
+            && rm -rf x86_64-linux-musl-cross.tgz x86_64.sum x86_64-linux-musl-cross \
             && apt-get update -qq \
             && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu \
             && rm -rf /var/lib/apt/lists/* \
-            && printf '#!/bin/sh\nexec x86_64-linux-gnu-gcc -B/usr/lib/x86_64-linux-musl -L/usr/lib/x86_64-linux-musl "$@"\n' \
+            && printf '#!/bin/sh\nexec x86_64-linux-gnu-gcc -B/x86_64-linux-musl/lib -L/x86_64-linux-musl/lib -isystem /x86_64-linux-musl/include "$@"\n' \
                > /usr/local/bin/x86_64-linux-musl-gcc \
             && chmod +x /usr/local/bin/x86_64-linux-musl-gcc \
             ;; \
