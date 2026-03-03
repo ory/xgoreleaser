@@ -192,7 +192,14 @@ RUN case "${TARGETARCH}" in \
         *) echo "Unsupported TARGETARCH: ${TARGETARCH}"; exit 1 ;; \
     esac
 
-ENV PATH=/aarch64-linux-musl-cross/bin:/arm-linux-musleabihf-cross/bin:$PATH
+# Symlink only prefixed musl cross-compiler tools into /usr/local/bin to avoid
+# unprefixed binaries (like `ld`) shadowing system tools and breaking glibc builds.
+RUN for tool in /aarch64-linux-musl-cross/bin/aarch64-linux-musl-*; do \
+        [ -e "$tool" ] && ln -sf "$tool" /usr/local/bin/$(basename "$tool"); \
+    done \
+    && for tool in /arm-linux-musleabihf-cross/bin/arm-linux-musleabihf-*; do \
+        [ -e "$tool" ] && ln -sf "$tool" /usr/local/bin/$(basename "$tool"); \
+    done 2>/dev/null || true
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
