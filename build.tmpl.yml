@@ -20,10 +20,6 @@ before:
     - curl -Lo /tmp/cosign.key https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.key
     - curl -Lo /tmp/cosign.pub https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub
 
-universal_binaries:
-  - id: macos-cgo
-    replace: false
-
 checksum:
   name_template: "checksums.txt"
 
@@ -45,179 +41,6 @@ docker_signs:
     stdin: "{{ .Env.COSIGN_PWD }}"
 
 builds:
-  - id: macos-cgo
-    flags:
-      - "-tags=sqlite,hsm,json1"
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-      - CC=o64-clang
-      - CXX=o64-clang++
-    goarch:
-      - amd64
-      - arm64
-    goos:
-      - darwin
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
-  - id: linux-cgo-amd64
-    flags:
-      - "-tags=sqlite,hsm,json1"
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-    goarch:
-      - amd64
-    goos:
-      - linux
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
-  - id: linux-cgo-arm64
-    flags:
-      - "-tags=sqlite,hsm,json1"
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-      - CC=aarch64-linux-gnu-gcc
-    goarch:
-      - arm64
-    goos:
-      - linux
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
-  - id: linux-cgo-arm
-    flags:
-      - "-tags=sqlite,hsm,json1"
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-      - CC=arm-linux-gnueabihf-gcc
-    goarch:
-      - arm
-    goarm:
-      - 6
-      - 7
-    goos:
-      - linux
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
-  - id: alpine-cgo-amd64
-    flags:
-      - "-tags=sqlite,hsm,json1"
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-      - CC=musl-gcc
-    goarch:
-      - amd64
-    goos:
-      - linux
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
-  - id: static-nosqlite
-    flags:
-      - "-tags=json1"
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=0
-    goarch:
-      - amd64
-      - arm64
-    goos:
-      - linux
-      - darwin
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
-
-  - id: alpine-cgo-arm64
-    flags:
-      - -tags
-      - sqlite
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-      - CC=aarch64-linux-musl-gcc
-    goarch:
-      - arm64
-    goos:
-      - linux
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
-  - id: alpine-cgo-arm
-    flags:
-      - -tags
-      - sqlite
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-      - CC=arm-linux-musleabihf-gcc
-    goarch:
-      - arm
-    goarm:
-      - 6
-      - 7
-    goos:
-      - linux
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
-  - id: windows-cgo
-    flags:
-      - "-tags=sqlite,hsm,json1"
-    ldflags:
-      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
-    binary: "{{ .ProjectName }}"
-    env:
-      - CGO_ENABLED=1
-      - CC=x86_64-w64-mingw32-gcc
-      - CXX=x86_64-w64-mingw32-g++
-    goarch:
-      - amd64
-    goos:
-      - windows
-    hooks:
-      post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-
   - id: default
     ldflags:
       - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
@@ -243,96 +66,10 @@ builds:
         goarch: arm
     hooks:
       post:
-        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
         - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
 
 archives:
-  - id: windows-cgo
-    builds:
-      - windows-cgo
-    format_overrides:
-      - goos: windows
-        formats: [zip]
-    name_template: >-
-      {{- .ProjectName }}_
-      {{- .Version }}-
-      {{- if eq .Os "darwin" }}macOS
-      {{- else }}{{ .Os }}
-      {{- end }}_sqlite_
-      {{- if eq .Arch "amd64" }}64bit
-      {{- else if eq .Arch "386" }}32bit
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-
-  - id: macos-cgo
-    builds:
-      - macos-cgo
-    format_overrides:
-      - goos: windows
-        formats: [zip]
-    name_template: >-
-      {{- .ProjectName }}_
-      {{- .Version }}-
-      {{- if eq .Os "darwin" }}macOS
-      {{- else }}{{ .Os }}
-      {{- end }}_sqlite_
-      {{- if eq .Arch "amd64" }}64bit
-      {{- else if eq .Arch "386" }}32bit
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-
-  - id: linux-cgo
-    builds:
-      - linux-cgo-arm64
-      - linux-cgo-amd64
-      - linux-cgo-arm
-    format_overrides:
-      - goos: windows
-        formats: [zip]
-    name_template: >-
-      {{- .ProjectName }}_
-      {{- .Version }}-
-      {{- if eq .Os "darwin" }}macOS
-      {{- else }}{{ .Os }}
-      {{- end }}_sqlite_
-      {{- if eq .Arch "amd64" }}64bit
-      {{- else if eq .Arch "386" }}32bit
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-
-  - id: static-nosqlite
-    builds:
-      - static-nosqlite
-    name_template: >-
-      {{- .ProjectName }}_
-      {{- .Version }}-
-      {{- if eq .Os "darwin" }}macOS
-      {{- else }}{{ .Os }}
-      {{- end }}_static-nosqlite_
-      {{- if eq .Arch "amd64" }}64bit
-      {{- else if eq .Arch "386" }}32bit
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-
-  - id: alpine-cgo
-    builds:
-      - alpine-cgo-amd64
-      - alpine-cgo-arm64
-      - alpine-cgo-arm
-    format_overrides:
-      - goos: windows
-        formats: [zip]
-    name_template: >-
-      {{- .ProjectName }}_
-      {{- .Version }}-
-      {{- if eq .Os "darwin" }}macOS
-      {{- else }}{{ .Os }}
-      {{- end }}_sqlite_libmusl_
-      {{- if eq .Arch "amd64" }}64bit
-      {{- else if eq .Arch "386" }}32bit
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-
   - id: default
     builds:
       - default
@@ -367,15 +104,14 @@ brews:
     test: |
       system "#{bin}/{{ .ProjectName }} version"
     ids:
-      - linux-cgo
-      - macos-cgo
+      - default
     homepage: https://www.ory.sh
     commit_author:
       name: aeneasr
       email: 3372410+aeneasr@users.noreply.github.com
 
 scoops:
-  - ids: [ windows-cgo ]
+  - ids: [ default ]
     name: "{{ .ProjectName }}"
     repository:
       owner: ory
@@ -403,7 +139,7 @@ dockers:
     dockerfile: "{{ .Var.dockerfile_static }}"
     goarch: amd64
     ids:
-      - static-nosqlite
+      - default
     build_flag_templates:
       - "--platform=linux/amd64"
 
@@ -413,7 +149,7 @@ dockers:
     dockerfile: "{{ .Var.dockerfile_static }}"
     goarch: arm64
     ids:
-      - static-nosqlite
+      - default
     build_flag_templates:
       - "--platform=linux/arm64"
 
@@ -423,7 +159,7 @@ dockers:
     dockerfile: "{{ .Var.dockerfile_alpine }}"
     goarch: amd64
     ids:
-      - alpine-cgo-amd64
+      - default
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.vendor=Ory"
@@ -441,7 +177,7 @@ dockers:
     goarch: arm64
     dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
-      - alpine-cgo-arm64
+      - default
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.vendor=Ory"
@@ -460,7 +196,7 @@ dockers:
     goarm: 7
     dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
-      - alpine-cgo-arm
+      - default
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.vendor=Ory"
@@ -479,7 +215,7 @@ dockers:
     goarm: 6
     dockerfile: "{{ .Var.dockerfile_alpine }}"
     ids:
-      - linux-cgo-arm
+      - default
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.vendor=Ory"
