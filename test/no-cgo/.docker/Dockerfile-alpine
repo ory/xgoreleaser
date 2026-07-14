@@ -1,0 +1,5 @@
+FROM alpine:3.12
+
+COPY xgoreleaser-test-no-cgo /usr/bin/xgoreleaser-test-no-cgo
+
+ENTRYPOINT ["/usr/bin/xgoreleaser-test-no-cgo"]

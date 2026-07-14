@@ -13,3 +13,7 @@ jobs:
           docker rm -f build || true
           docker build -f ./test/.docker/Dockerfile-goreleaser -t build .
           docker run -v /var/run/docker.sock:/var/run/docker.sock --cpus 2 --name build build
+      - run: |
+          docker rm -f build-no-cgo || true
+          docker build -f ./test/no-cgo/.docker/Dockerfile-goreleaser -t build-no-cgo .
+          docker run -v /var/run/docker.sock:/var/run/docker.sock --cpus 2 --name build-no-cgo build-no-cgo

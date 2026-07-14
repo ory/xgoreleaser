@@ -21,10 +21,30 @@ to build and publish the image. **Do not use `v` prefixes in the version!**
 
 ![Workflow parameters](.github/workflow.png)
 
-## Using the Build Tempalte
+## Using the Build Template
+
+The shared config is split into two files:
+
+- `build-base.tmpl.yml` — common infrastructure plus the CGO-disabled
+  builds (`default`, `static-nosqlite`), their archives, the distroless
+  Docker images and their manifests, and no-CGO variants of the Homebrew
+  formula, the Alpine Docker images, and the main
+  `:tag`/`:major`/`:minor`/`:patch`/`:latest` manifests. Pure-Go and needs
+  no C toolchain.
+- `build-cgo.tmpl.yml` — the SQLite/HSM CGO build matrix plus everything
+  that ships those binaries: the `*-cgo` archives, Homebrew, Scoop, the
+  Alpine Docker images, and the main Docker manifests. Including this file
+  sets the internal `cgo` variable, which disables the base template's
+  no-CGO Homebrew/Alpine/manifest variants so the CGO ones are published
+  instead.
+
+`build.tmpl.yml` is a backward-compatible aggregator that pulls in both via
+nested `from_url` includes. Existing consumers do not need to change.
+
+### Full matrix (CGO + no-CGO)
 
 ```yml
-# Include the base config
+# Include the aggregator — same behavior as before.
 includes:
   - from_url:
       url: https://raw.githubusercontent.com/ory/xgoreleaser/master/build.tmpl.yml
@@ -52,6 +72,35 @@ variables:
 # to name the binary, docker images, etc.
 project_name: ory
 ```
+
+### No-CGO only
+
+For projects that do not need SQLite/HSM (e.g. `ory/cli`), include only the
+base template. This drops the entire CGO build matrix and the `*-cgo`
+archives, but still publishes everything else — built from the no-CGO
+binaries: the Homebrew formula, the Alpine and distroless Docker images,
+and all Docker manifests (`:tag`, `:vMAJOR[.MINOR[.PATCH]]`, `:latest`,
+and the `-distroless` variants). Scoop is CGO-only.
+
+```yml
+includes:
+  - from_url:
+      url: https://raw.githubusercontent.com/ory/xgoreleaser/master/build-base.tmpl.yml
+
+variables:
+  brew_name: cli
+  brew_description: "Use Ory from your terminal!"
+  buildinfo_hash: "github.com/ory/cli/buildinfo.GitHash"
+  buildinfo_tag: "github.com/ory/cli/buildinfo.Version"
+  buildinfo_date: "github.com/ory/cli/buildinfo.Time"
+
+project_name: ory
+```
+
+If `brew_name` is unset, the Homebrew upload is skipped automatically.
+Do not set the `cgo` variable yourself — it is the internal switch by
+which `build-cgo.tmpl.yml` replaces the base template's no-CGO
+Homebrew/Alpine/manifest sections with the CGO ones.
 
 ## Building Locally
 
@@ -109,5 +158,9 @@ upload the generated file and mark it public in this
 
 ## Updating Build Template
 
-The [build template](./build.tmpl.yml) is ingested by all projects (e.g. Ory
-Kratos) and modified slightly to fit the needs of the project.
+The build templates are ingested by all projects (e.g. Ory Kratos) and
+modified slightly to fit the needs of the project. When editing, remember
+that [`build.tmpl.yml`](./build.tmpl.yml) is now a thin aggregator —
+substantive changes belong in [`build-base.tmpl.yml`](./build-base.tmpl.yml)
+(no-CGO common pieces) or [`build-cgo.tmpl.yml`](./build-cgo.tmpl.yml)
+(CGO add-ons).
