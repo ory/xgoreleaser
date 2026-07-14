@@ -1,5 +1,10 @@
 version: 2
 
+variables:
+  # Disables the Homebrew/Alpine/manifest sections in build-base.tmpl.yml in
+  # favor of the CGO variants below.
+  cgo: true
+
 universal_binaries:
   - id: macos-cgo
     replace: false

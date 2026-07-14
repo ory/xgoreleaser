@@ -27,11 +27,16 @@ The shared config is split into two files:
 
 - `build-base.tmpl.yml` — common infrastructure plus the CGO-disabled
   builds (`default`, `static-nosqlite`), their archives, the distroless
-  Docker images, and their manifests. Pure-Go and needs no C toolchain.
+  Docker images and their manifests, and no-CGO variants of the Homebrew
+  formula, the Alpine Docker images, and the main
+  `:tag`/`:major`/`:minor`/`:patch`/`:latest` manifests. Pure-Go and needs
+  no C toolchain.
 - `build-cgo.tmpl.yml` — the SQLite/HSM CGO build matrix plus everything
   that ships those binaries: the `*-cgo` archives, Homebrew, Scoop, the
-  Alpine Docker images, and the `:tag`/`:major`/`:minor`/`:patch`/`:latest`
-  Docker manifests.
+  Alpine Docker images, and the main Docker manifests. Including this file
+  sets the internal `cgo` variable, which disables the base template's
+  no-CGO Homebrew/Alpine/manifest variants so the CGO ones are published
+  instead.
 
 `build.tmpl.yml` is a backward-compatible aggregator that pulls in both via
 nested `from_url` includes. Existing consumers do not need to change.
@@ -71,10 +76,11 @@ project_name: ory
 ### No-CGO only
 
 For projects that do not need SQLite/HSM (e.g. `ory/cli`), include only the
-base template. This drops the entire CGO build matrix, the `*-cgo`
-archives, Homebrew, Scoop, the Alpine Docker images, and their manifests.
-Distroless images and their `:tag-distroless` / `:vMAJOR.MINOR.PATCH-distroless`
-manifests are still published.
+base template. This drops the entire CGO build matrix and the `*-cgo`
+archives, but still publishes everything else — built from the no-CGO
+binaries: the Homebrew formula, the Alpine and distroless Docker images,
+and all Docker manifests (`:tag`, `:vMAJOR[.MINOR[.PATCH]]`, `:latest`,
+and the `-distroless` variants). Scoop is CGO-only.
 
 ```yml
 includes:
@@ -82,6 +88,8 @@ includes:
       url: https://raw.githubusercontent.com/ory/xgoreleaser/master/build-base.tmpl.yml
 
 variables:
+  brew_name: cli
+  brew_description: "Use Ory from your terminal!"
   buildinfo_hash: "github.com/ory/cli/buildinfo.GitHash"
   buildinfo_tag: "github.com/ory/cli/buildinfo.Version"
   buildinfo_date: "github.com/ory/cli/buildinfo.Time"
@@ -89,9 +97,10 @@ variables:
 project_name: ory
 ```
 
-If you still want Homebrew/Scoop/Alpine Docker for a no-CGO project, add
-those blocks directly in your own `.goreleaser.yml` referencing the
-`default` archive/build id.
+If `brew_name` is unset, the Homebrew upload is skipped automatically.
+Do not set the `cgo` variable yourself — it is the internal switch by
+which `build-cgo.tmpl.yml` replaces the base template's no-CGO
+Homebrew/Alpine/manifest sections with the CGO ones.
 
 ## Building Locally
 
