@@ -1,3 +1,5 @@
+version: 2
+
 includes:
   - from_file:
       path: ../../build-base.tmpl.yml

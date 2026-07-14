@@ -2,7 +2,7 @@ FROM oryd/xgoreleaser:test-build
 
 WORKDIR /home/ory/test/no-cgo
 
-ADD test/no-cgo/go.mod test/no-cgo/go.mod ./
+ADD test/no-cgo/go.mod ./
 RUN go mod download
 
 ENV RELEASE_NAME=v0.0.0-alpha.1
