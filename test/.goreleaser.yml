@@ -1,6 +1,8 @@
 includes:
   - from_file:
-      path: ../build.tmpl.yml
+      path: ../build-base.tmpl.yml
+  - from_file:
+      path: ../build-cgo.tmpl.yml
 
 variables:
   brew_name: xgoreleaser-test

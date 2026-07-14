@@ -1,0 +1,10 @@
+includes:
+  - from_file:
+      path: ../../build-base.tmpl.yml
+
+variables:
+  buildinfo_hash: "github.com/ory/xgoreleaser/test/no-cgo/main.GitHash"
+  buildinfo_tag: "github.com/ory/xgoreleaser/test/no-cgo/main.Version"
+  buildinfo_date: "github.com/ory/xgoreleaser/test/no-cgo/main.Time"
+
+project_name: xgoreleaser-test-no-cgo

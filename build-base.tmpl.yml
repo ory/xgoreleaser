@@ -1,0 +1,172 @@
+version: 2
+
+variables:
+  brew_name: ""
+  brew_description: ""
+  buildinfo_hash: ""
+  buildinfo_tag: ""
+  buildinfo_date: ""
+  dockerfile_alpine: ".docker/Dockerfile-alpine"
+  dockerfile_static: ".docker/Dockerfile-distroless-static"
+  pub_key: "https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub"
+
+env:
+  - GO111MODULE=on
+
+before:
+  hooks:
+    - go mod download
+    - git checkout -- go.sum go.mod
+    - curl -Lo /tmp/cosign.key https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.key
+    - curl -Lo /tmp/cosign.pub https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub
+
+checksum:
+  name_template: "checksums.txt"
+
+signs:
+  - cmd: cosign
+    stdin: "{{ .Env.COSIGN_PWD }}"
+    args:
+      [
+        "sign-blob",
+        "--key=/tmp/cosign.key",
+        "--output=${signature}",
+        "${artifact}",
+      ]
+    artifacts: checksum
+
+docker_signs:
+  - artifacts: manifests
+    args: ["sign", "--key=/tmp/cosign.key", "${artifact}"]
+    stdin: "{{ .Env.COSIGN_PWD }}"
+
+builds:
+  - id: static-nosqlite
+    flags:
+      - "-tags=json1"
+    ldflags:
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
+    binary: "{{ .ProjectName }}"
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+      - arm64
+    goos:
+      - linux
+      - darwin
+    hooks:
+      post:
+        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+
+  - id: default
+    ldflags:
+      - "-s -w -X {{.Var.buildinfo_tag}}={{.Tag}} -X {{.Var.buildinfo_hash}}={{.FullCommit}} -X {{.Var.buildinfo_date}}={{.Date}}"
+    binary: "{{ .ProjectName }}"
+    env:
+      - CGO_ENABLED=0
+    goarch:
+      - amd64
+      - 386
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
+    goos:
+      - linux
+      - windows
+      - darwin
+      # Disabled because build will time out, it works though:
+      # - freebsd
+    ignore:
+      - goos: windows
+        goarch: arm
+    hooks:
+      post:
+        - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+
+archives:
+  - id: static-nosqlite
+    builds:
+      - static-nosqlite
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_static-nosqlite_
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+  - id: default
+    builds:
+      - default
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: >-
+      {{- .ProjectName }}_
+      {{- .Version }}-
+      {{- if eq .Os "darwin" }}macOS
+      {{- else }}{{ .Os }}
+      {{- end }}_
+      {{- if eq .Arch "amd64" }}64bit
+      {{- else if eq .Arch "386" }}32bit
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+snapshot:
+  version_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+
+release:
+  prerelease: auto
+  name_template: "{{ .Tag }}"
+  footer: |
+    {{ with .Var.pub_key }}
+    Artifacts can be verified with [cosign](https://github.com/sigstore/cosign) using [this public key]({{ . }}).
+    {{ end }}
+  extra_files:
+    - glob: ./dist/*.bom.json
+
+dockers:
+  - image_templates:
+      - "oryd/{{ .ProjectName }}:v{{ .Version }}-amd64-distroless"
+    use: buildx
+    dockerfile: "{{ .Var.dockerfile_static }}"
+    goarch: amd64
+    ids:
+      - static-nosqlite
+    build_flag_templates:
+      - "--platform=linux/amd64"
+
+  - image_templates:
+      - "oryd/{{ .ProjectName }}:v{{ .Version }}-arm64-distroless"
+    use: buildx
+    dockerfile: "{{ .Var.dockerfile_static }}"
+    goarch: arm64
+    ids:
+      - static-nosqlite
+    build_flag_templates:
+      - "--platform=linux/arm64"
+
+docker_manifests:
+  - id: patch-distroless
+    name_template: "oryd/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}.{{ .Patch }}-distroless"
+    skip_push: auto
+    image_templates:
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-amd64-distroless"
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64-distroless"
+
+  - id: tag-distroless
+    name_template: "oryd/{{ .ProjectName }}:{{ .Tag }}-distroless"
+    image_templates:
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-amd64-distroless"
+      - "oryd/{{ .ProjectName }}:{{ .Tag }}-arm64-distroless"
