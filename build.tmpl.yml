@@ -8,7 +8,7 @@ variables:
   buildinfo_date: ""
   dockerfile_alpine: ".docker/Dockerfile-alpine"
   dockerfile_static: ".docker/Dockerfile-distroless-static"
-  pub_key: "https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub"
+  pub_key: "https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/cosign.pub"
 
 env:
   - GO111MODULE=on
@@ -17,8 +17,8 @@ before:
   hooks:
     - go mod download
     - git checkout -- go.sum go.mod
-    - curl -Lo /tmp/cosign.key https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.key
-    - curl -Lo /tmp/cosign.pub https://raw.githubusercontent.com/ory/xgoreleaser/master/cosign.pub
+    - curl -Lo /tmp/cosign.key https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/cosign.key
+    - curl -Lo /tmp/cosign.pub https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/cosign.pub
 
 universal_binaries:
   - id: macos-cgo
@@ -63,7 +63,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   - id: linux-cgo-amd64
     flags:
@@ -80,7 +80,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   - id: linux-cgo-arm64
     flags:
@@ -98,7 +98,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   - id: linux-cgo-arm
     flags:
@@ -119,7 +119,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   - id: alpine-cgo-amd64
     flags:
@@ -137,7 +137,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   - id: static-nosqlite
     flags:
@@ -156,7 +156,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
 
   - id: alpine-cgo-arm64
     flags:
@@ -175,7 +175,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   - id: alpine-cgo-arm
     flags:
@@ -197,7 +197,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   - id: windows-cgo
     flags:
@@ -216,7 +216,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
 
   - id: default
     ldflags:
@@ -244,7 +244,7 @@ builds:
     hooks:
       post:
         - cmd: cyclonedx-gomod app -licenses -json -output "./dist/{{ .ProjectName }}_{{ .Version }}_sqlite_{{ .Target }}.bom.json"
-        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/master/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+        - cmd: bash <(curl https://raw.githubusercontent.com/ory/xgoreleaser/7191425b17cabf360a8b148c9dd2dce88c4c59ed/rename.sh) "./dist/{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
 
 archives:
   - id: windows-cgo
