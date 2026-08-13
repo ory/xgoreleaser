@@ -11,8 +11,11 @@ jobs:
   stale:
     if: github.repository_owner == 'ory'
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
-      - uses: actions/stale@v4
+      - uses: actions/stale@a20b814fb01b71def3bd6f56e7494d667ddf28da # v4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           stale-issue-message: |
