@@ -5,9 +5,12 @@ on: pull_request
 jobs:
   goreleaser:
     name: go
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: docker build -t oryd/xgoreleaser:test-build .
       - run: |
           docker rm -f build || true

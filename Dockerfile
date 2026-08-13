@@ -104,18 +104,29 @@ RUN apt-get install -y \
 RUN rm -rf /var/lib/apt/lists/*
 
 ARG GORELEASER_VERSION=2.12.5
+ARG TARGETARCH
 
-RUN curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_x86_64.tar.gz \
-    && mkdir -p goreleaser_Linux_x86_64 \
-    && tar -xvf goreleaser_Linux_x86_64.tar.gz -C goreleaser_Linux_x86_64 \
-    && mv goreleaser_Linux_x86_64/goreleaser /usr/local/bin/goreleaser-oss \
-    && rm -rf goreleaser_Linux_x86_64.* goreleaser_Linux_x86_64/
+RUN case "${TARGETARCH}" in \
+        amd64) GR_ARCH=x86_64 ;; \
+        arm64) GR_ARCH=arm64 ;; \
+        *) echo "Unsupported TARGETARCH: ${TARGETARCH}"; exit 1 ;; \
+    esac \
+    && curl -LO https://github.com/goreleaser/goreleaser/releases/download/v${GORELEASER_VERSION}/goreleaser_Linux_${GR_ARCH}.tar.gz \
+    && mkdir -p goreleaser_Linux_${GR_ARCH} \
+    && tar -xvf goreleaser_Linux_${GR_ARCH}.tar.gz -C goreleaser_Linux_${GR_ARCH} \
+    && mv goreleaser_Linux_${GR_ARCH}/goreleaser /usr/local/bin/goreleaser-oss \
+    && rm -rf goreleaser_Linux_${GR_ARCH}.* goreleaser_Linux_${GR_ARCH}/
 
-RUN curl -Lo "goreleaser-pro_Linux_x86_64.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}/goreleaser-pro_Linux_x86_64.tar.gz" \
-    && mkdir -p goreleaser-pro_Linux_x86_64 \
-    && tar -xvf goreleaser-pro_Linux_x86_64.tar.gz -C goreleaser-pro_Linux_x86_64 \
-    && mv goreleaser-pro_Linux_x86_64/goreleaser /usr/local/bin/goreleaser \
-    && rm -rf goreleaser-pro_Linux_x86_64.* goreleaser-pro_Linux_x86_64/
+RUN case "${TARGETARCH}" in \
+        amd64) GR_ARCH=x86_64 ;; \
+        arm64) GR_ARCH=arm64 ;; \
+        *) echo "Unsupported TARGETARCH: ${TARGETARCH}"; exit 1 ;; \
+    esac \
+    && curl -Lo "goreleaser-pro_Linux_${GR_ARCH}.tar.gz" "https://github.com/goreleaser/goreleaser-pro/releases/download/v${GORELEASER_VERSION}/goreleaser-pro_Linux_${GR_ARCH}.tar.gz" \
+    && mkdir -p goreleaser-pro_Linux_${GR_ARCH} \
+    && tar -xvf goreleaser-pro_Linux_${GR_ARCH}.tar.gz -C goreleaser-pro_Linux_${GR_ARCH} \
+    && mv goreleaser-pro_Linux_${GR_ARCH}/goreleaser /usr/local/bin/goreleaser \
+    && rm -rf goreleaser-pro_Linux_${GR_ARCH}.* goreleaser-pro_Linux_${GR_ARCH}/
 
 RUN goreleaser --version && goreleaser-oss --version
 
@@ -126,22 +137,78 @@ COPY --from=osx-cross "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 COPY --from=libtool   "${OSX_CROSS_PATH}/." "${OSX_CROSS_PATH}/"
 ENV PATH=${OSX_CROSS_PATH}/target/bin:$PATH
 
-ENV AARCH64SUM=8695ff86979cdf30fbbcd33061711f5b1ebc3c48a87822b9ca56cde6d3a22abd4dab30fdcd1789ac27c6febbaeb9e5bde59d79d66552fae53d54cc1377a19272
+# musl.cc toolchain checksums
+# aarch64-linux-musl-cross  (x86_64-hosted, targets aarch64) — used on amd64 build hosts
+ENV AARCH64_CROSS_SUM=8695ff86979cdf30fbbcd33061711f5b1ebc3c48a87822b9ca56cde6d3a22abd4dab30fdcd1789ac27c6febbaeb9e5bde59d79d66552fae53d54cc1377a19272
+# aarch64-linux-musl-native  (aarch64-hosted, targets aarch64) — used on arm64 build hosts
+ENV AARCH64_NATIVE_SUM=16d544e09845c9dbba50f29e0cb04dd661e17eb63c56acad6a67fd2a78aa7596b792477c7177d3cd56d408a27dc291a90507df882f2b099c0f25511ce08fd3b5
+# arm-linux-musleabihf-cross (x86_64-hosted, targets armhf)  — only available for amd64 build hosts
 ENV ARMSUM=fe006d9176cedb453fd817f892f61f6bac273c15879f9c537e22c75b8da4995991211f6d23b0c0c97a87121fe55cf9f9f29cc3d1cf9376804535f07b6c017729
+# x86_64-linux-musl-cross (x86_64-hosted, targets x86_64 musl) — sysroot extracted for arm64 build hosts
+ENV X86_64_MUSL_CROSS_SUM=52abd1a56e670952116e35d1a62e048a9b6160471d988e16fa0e1611923dd108a581d2e00874af5eb04e4968b1ba32e0eb449a1f15c3e4d5240ebe09caf5a9f3
 
-RUN curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/aarch64-linux-musl-cross.tgz \
-    && echo "$AARCH64SUM  aarch64-linux-musl-cross.tgz" > aarch64.sum \
-    && sha512sum -c aarch64.sum \
-    && tar xzf aarch64-linux-musl-cross.tgz \
-    && mv aarch64-linux-musl-cross /aarch64-linux-musl-cross
+# Install musl cross-compilation toolchains.
+# On amd64: aarch64-linux-musl-cross (cross) + arm-linux-musleabihf-cross (cross)
+#           x86_64-linux-musl-gcc -> musl-gcc symlink (musl-tools already provides the sysroot)
+# On arm64: aarch64-linux-musl-native (native, same-arch)
+#           x86_64-linux-musl-cross sysroot extracted (crt files + libc; these are x86_64 target
+#           files, not host executables, so no QEMU needed) + gcc-x86-64-linux-gnu as compiler
+RUN case "${TARGETARCH}" in \
+        amd64) \
+            curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/aarch64-linux-musl-cross.tgz \
+            && echo "$AARCH64_CROSS_SUM  aarch64-linux-musl-cross.tgz" > aarch64.sum \
+            && sha512sum -c aarch64.sum \
+            && tar xzf aarch64-linux-musl-cross.tgz \
+            && mv aarch64-linux-musl-cross /aarch64-linux-musl-cross \
+            && rm aarch64-linux-musl-cross.tgz aarch64.sum \
+            && curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/arm-linux-musleabihf-cross.tgz \
+            && echo "$ARMSUM  arm-linux-musleabihf-cross.tgz" > arm.sum \
+            && sha512sum -c arm.sum \
+            && tar xzf arm-linux-musleabihf-cross.tgz \
+            && mv arm-linux-musleabihf-cross /arm-linux-musleabihf-cross \
+            && rm arm-linux-musleabihf-cross.tgz arm.sum \
+            && ln -sf /usr/bin/musl-gcc /usr/local/bin/x86_64-linux-musl-gcc \
+            ;; \
+        arm64) \
+            curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/aarch64-linux-musl-native.tgz \
+            && echo "$AARCH64_NATIVE_SUM  aarch64-linux-musl-native.tgz" > aarch64.sum \
+            && sha512sum -c aarch64.sum \
+            && tar xzf aarch64-linux-musl-native.tgz \
+            && mv aarch64-linux-musl-native /aarch64-linux-musl-cross \
+            && rm aarch64-linux-musl-native.tgz aarch64.sum \
+            && curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/x86_64-linux-musl-cross.tgz \
+            && echo "$X86_64_MUSL_CROSS_SUM  x86_64-linux-musl-cross.tgz" > x86_64.sum \
+            && sha512sum -c x86_64.sum \
+            && tar xzf x86_64-linux-musl-cross.tgz \
+            && mv x86_64-linux-musl-cross/x86_64-linux-musl /x86_64-linux-musl \
+            && rm -rf x86_64-linux-musl-cross.tgz x86_64.sum x86_64-linux-musl-cross \
+            && curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/arm-linux-musleabihf-cross.tgz \
+            && echo "$ARMSUM  arm-linux-musleabihf-cross.tgz" > arm.sum \
+            && sha512sum -c arm.sum \
+            && tar xzf arm-linux-musleabihf-cross.tgz \
+            && mv arm-linux-musleabihf-cross/arm-linux-musleabihf /arm-linux-musleabihf \
+            && rm -rf arm-linux-musleabihf-cross.tgz arm.sum arm-linux-musleabihf-cross \
+            && apt-get update -qq \
+            && apt-get install -y --no-install-recommends gcc-x86-64-linux-gnu libc6-dev-amd64-cross \
+            && rm -rf /var/lib/apt/lists/* \
+            && printf '#!/bin/sh\nexec x86_64-linux-gnu-gcc -B/x86_64-linux-musl/lib -L/x86_64-linux-musl/lib -isystem /x86_64-linux-musl/include "$@"\n' \
+               > /usr/local/bin/x86_64-linux-musl-gcc \
+            && chmod +x /usr/local/bin/x86_64-linux-musl-gcc \
+            && printf '#!/bin/sh\nexec arm-linux-gnueabihf-gcc -B/arm-linux-musleabihf/lib -L/arm-linux-musleabihf/lib -isystem /arm-linux-musleabihf/include "$@"\n' \
+               > /usr/local/bin/arm-linux-musleabihf-gcc \
+            && chmod +x /usr/local/bin/arm-linux-musleabihf-gcc \
+            ;; \
+        *) echo "Unsupported TARGETARCH: ${TARGETARCH}"; exit 1 ;; \
+    esac
 
-RUN curl -LO https://github.com/musl-cc/musl.cc/releases/download/v0.0.1/arm-linux-musleabihf-cross.tgz \
-    && echo "$ARMSUM  arm-linux-musleabihf-cross.tgz" > arm.sum \
-    && sha512sum -c arm.sum \
-    && tar xzf arm-linux-musleabihf-cross.tgz \
-    && mv arm-linux-musleabihf-cross /arm-linux-musleabihf-cross
-
-ENV PATH=/aarch64-linux-musl-cross/bin:/arm-linux-musleabihf-cross/bin:$PATH
+# Symlink only prefixed musl cross-compiler tools into /usr/local/bin to avoid
+# unprefixed binaries (like `ld`) shadowing system tools and breaking glibc builds.
+RUN for tool in /aarch64-linux-musl-cross/bin/aarch64-linux-musl-*; do \
+        [ -e "$tool" ] && ln -sf "$tool" /usr/local/bin/$(basename "$tool"); \
+    done \
+    && for tool in /arm-linux-musleabihf-cross/bin/arm-linux-musleabihf-*; do \
+        [ -e "$tool" ] && ln -sf "$tool" /usr/local/bin/$(basename "$tool"); \
+    done 2>/dev/null || true
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
