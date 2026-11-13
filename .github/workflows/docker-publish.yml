@@ -35,13 +35,17 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push image
+        env:
+          PLATFORM: ${{ matrix.platform }}
         run: |
           go_version="${{ github.event.inputs.golang }}"
           goreleaser_version="${{ github.event.inputs.goreleaser }}"
-          arch="${{ matrix.platform##*/}}"
+          # Strip the "linux/" prefix in the shell; GitHub expressions have no
+          # parameter expansion.
+          arch="${PLATFORM##*/}"
           docker buildx build --push \
             --build-arg GO_VERSION=${go_version} --build-arg GORELEASER_VERSION=${goreleaser_version} \
-            --platform ${{ matrix.platform }} \
+            --platform "${PLATFORM}" \
             -t oryd/xgoreleaser:${go_version}-${goreleaser_version}-${arch} \
             .
 
